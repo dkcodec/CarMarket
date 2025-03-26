@@ -1,6 +1,5 @@
 {
-  "HomePage": {
-    "title": "Hello world!",
-    "about": "Go to the about page"
+  "MainPage": {
+    "CAR_COUNT": "Car finded"
   }
 }

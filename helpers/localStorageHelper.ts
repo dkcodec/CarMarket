@@ -36,3 +36,15 @@ export const getFromLocalStorage = (key: string) => {
     return localObject
   }
 }
+
+/**
+ * The function set properties to localStorage.
+ *
+ * @param key: string // property name
+ * @param value: any // property value
+ */
+export const setToLocalStorage = (key: string, value: any) => {
+  if (isLocalStorageAvailable()) {
+    localStorage.setItem(key, JSON.stringify(value))
+  }
+}

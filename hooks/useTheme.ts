@@ -1,10 +1,16 @@
+import {
+  getFromLocalStorage,
+  setToLocalStorage,
+} from '@/helpers/localStorageHelper'
 import { useEffect, useState } from 'react'
 
 export const useTheme = () => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark'
+    const savedTheme = getFromLocalStorage('theme')
+      ? (getFromLocalStorage('theme') as 'light' | 'dark')
+      : 'dark'
     const prefersDark = window.matchMedia(
       '(prefers-color-scheme: dark)'
     ).matches
@@ -21,7 +27,7 @@ export const useTheme = () => {
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light'
     setTheme(newTheme)
-    localStorage.setItem('theme', newTheme)
+    setToLocalStorage('theme', newTheme)
     document.documentElement.classList.toggle('dark', newTheme === 'dark')
   }
 

@@ -1,6 +1,5 @@
 {
-  "HomePage": {
-    "title": "ПРИВЕТ",
-    "about": "О НАС"
+  "MainPage": {
+    "CAR_COUNT": "Машин найдено"
   }
 }

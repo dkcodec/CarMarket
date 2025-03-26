@@ -1,6 +1,6 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
-import { ThemeProvider } from '@/components/layout/providers/ThemeProvider'
+import { Providers } from '@/components/layout/providers/providers'
 import { getLocale } from 'next-intl/server'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -19,7 +19,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )
