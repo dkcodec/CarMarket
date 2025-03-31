@@ -1,5 +1,12 @@
 {
   "MainPage": {
     "CAR_COUNT": "Car finded"
+  },
+  "Search": {
+    "PLACEHOLDER": "Search"
+  },
+  "Sidebar": {
+    "TITLE": "Filters",
+    "RESET": "Reset"
   }
 }

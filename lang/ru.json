@@ -1,5 +1,18 @@
 {
   "MainPage": {
     "CAR_COUNT": "Машин найдено"
+  },
+  "Search": {
+    "PLACEHOLDER": "Поиск"
+  },
+  "Sidebar": {
+    "TITLE": "Фильтры",
+    "RESET": "Сбросить",
+    "DESCRIPTION": "Сторонние библиотеки, которые используются в этом проекте.",
+    "LIBRARIES": {
+      "NAME": "Название",
+      "VERSION": "Версия",
+      "DESCRIPTION": "Описание"
+    }
   }
 }
