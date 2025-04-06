@@ -198,7 +198,7 @@ const Filters = () => {
       price_start: finalPriceStart,
       price_end: finalPriceEnd,
     })
-  }, [searchParams, brand, model, generation, price_start, price_end])
+  }, [searchParams, brands])
 
   // Загружаем бренды
   useEffect(() => {
@@ -231,23 +231,38 @@ const Filters = () => {
     loadGenerations()
   }, [model, generationsByModel])
 
-  // При сабмите формы – отправляем значения в стор И в URL
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    // Обновляем стор:
+    const cleanData: Record<string, string> = {}
+
+    if (data.brand) {
+      cleanData.brand = data.brand
+
+      if (data.model) {
+        cleanData.model = data.model
+
+        if (data.generation) {
+          cleanData.generation = data.generation
+        }
+      }
+    }
+
+    if (typeof data.price_start === 'number') {
+      cleanData.price_start = data.price_start.toString()
+    }
+
+    if (typeof data.price_end === 'number') {
+      cleanData.price_end = data.price_end.toString()
+    }
+
+    // Сохраняем в стор
     setBrand(data.brand || null)
-    setModel(data.model || null)
-    setGeneration(data.generation || null)
+    setModel(data.brand ? data.model || null : null)
+    setGeneration(data.model ? data.generation || null : null)
     setPriceRange(data.price_start || 0, data.price_end || 100000)
 
-    // Перекладываем в query-параметры
-    const entries = Object.fromEntries(
-      Object.entries(data).map(([k, v]) => [
-        k,
-        typeof v === 'number' ? v.toString() : v,
-      ])
-    )
+    // Обновляем параметры в URL
     paramsChangeMany({
-      entries,
+      entries: cleanData,
       locale,
       searchParams,
       router,
@@ -263,17 +278,18 @@ const Filters = () => {
   const handleBrandChange = (value: string) => {
     form.setValue('brand', value)
     setBrand(value)
-    // Сбрасываем модель и поколение
+
     form.setValue('model', undefined)
-    form.setValue('generation', undefined)
     setModel(null)
+
+    form.setValue('generation', undefined)
     setGeneration(null)
   }
 
   const handleModelChange = (value: string) => {
     form.setValue('model', value)
     setModel(value)
-    // Сбрасываем поколение
+
     form.setValue('generation', undefined)
     setGeneration(null)
   }
