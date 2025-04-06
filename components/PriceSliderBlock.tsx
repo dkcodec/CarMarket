@@ -14,12 +14,18 @@ const PriceSliderBlock: React.FC<PriceSliderBlockProps> = (params) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = parseInt(e.target.value) || 0
 
-    if (option === 'min' && inputValue <= max) {
-      onChange(inputValue)
-    }
-
-    if (option === 'max' && inputValue >= min) {
-      onChange(inputValue)
+    if (option === 'min') {
+      if (inputValue > max) {
+        onChange(max)
+      } else {
+        onChange(inputValue)
+      }
+    } else if (option === 'max') {
+      if (inputValue < min) {
+        onChange(min)
+      } else {
+        onChange(inputValue)
+      }
     }
   }
 

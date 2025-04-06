@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useTransition } from 'react'
+import React, { useEffect, useState, useTransition } from 'react'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -25,10 +25,9 @@ import { useLocale, useTranslations } from 'next-intl'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { paramsChangeMany } from '@/helpers/SearchParamsHelpers'
 
-// Импорт нашего zustand-хранилища:
+// Наш стор:
 import { useFiltersStore } from '@/store/useFiltersStore'
 
-// Типы
 interface Brand {
   name: string
   source: string
@@ -44,7 +43,6 @@ interface Generation {
   source: string
 }
 
-// Фетчим списки (бренды, модели, поколения)
 const fetchBrands = async (): Promise<Brand[]> => {
   try {
     const res = await fetch(
@@ -52,7 +50,6 @@ const fetchBrands = async (): Promise<Brand[]> => {
       {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_TOKEN}`,
         },
       }
     )
@@ -72,7 +69,6 @@ const fetchModels = async (brandSource: string): Promise<Model[]> => {
       {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_TOKEN}`,
         },
       }
     )
@@ -92,7 +88,6 @@ const fetchGenerations = async (modelSource: string): Promise<Generation[]> => {
       {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_TOKEN}`,
         },
       }
     )
@@ -117,11 +112,11 @@ const FormSchema = z.object({
 const Filters = () => {
   const t = useTranslations()
   const locale = useLocale()
-  const searchParams = useSearchParams()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
 
-  // Читаем нужные значения и сеттеры из zustand:
+  // Zustand-хранилище:
   const {
     brand,
     setBrand,
@@ -134,16 +129,18 @@ const Filters = () => {
     setPriceRange,
   } = useFiltersStore()
 
+  console.log('brand', brand)
+
   // Для списков:
-  const [brands, setBrands] = React.useState<Brand[]>([])
-  const [modelsByBrand, setModelsByBrand] = React.useState<
-    Record<string, Model[]>
-  >({})
-  const [generationsByModel, setGenerationsByModel] = React.useState<
+  const [brands, setBrands] = useState<Brand[]>([])
+  const [modelsByBrand, setModelsByBrand] = useState<Record<string, Model[]>>(
+    {}
+  )
+  const [generationsByModel, setGenerationsByModel] = useState<
     Record<string, Generation[]>
   >({})
 
-  // Инициализируем нашу форму через react-hook-form:
+  // Регистрируем форму (React Hook Form), чтобы валидировать и оформлять сабмит
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -155,29 +152,55 @@ const Filters = () => {
     },
   })
 
+  console.log('form', form.getValues())
+  console.log('brand', brand, 'model', model, 'generation', generation)
+  console.log('price_start', price_start, 'price_end', price_end)
+
   useEffect(() => {
-    if (
-      brand ||
-      model ||
-      generation ||
-      price_start !== 0 ||
-      price_end !== 100000
-    ) {
-      return
-    }
-    const brandFromParams = searchParams.get('brand')
-    const modelFromParams = searchParams.get('model')
-    const generationFromParams = searchParams.get('generation')
-    const priceStartFromParams = Number(searchParams.get('price_start') || 0)
-    const priceEndFromParams = Number(searchParams.get('price_end') || 100000)
+    // Читаем из searchParams
+    const brandSearch = searchParams.get('brand')
+    const modelSearch = searchParams.get('model')
+    const generationSearch = searchParams.get('generation')
+    const priceStartSearch = Number(searchParams.get('price_start'))
+    const priceEndSearch = Number(searchParams.get('price_end'))
 
-    setBrand(brandFromParams || null)
-    setModel(modelFromParams || null)
-    setGeneration(generationFromParams || null)
-    setPriceRange(priceStartFromParams, priceEndFromParams)
-  }, [])
+    // Если в query-параметрах чего-то нет — используем текущее из стор
+    const finalBrand = brandSearch ?? brand
+    const finalModel = modelSearch ?? model
+    const finalGeneration = generationSearch ?? generation
+    const finalPriceStart = priceStartSearch || price_start
+    const finalPriceEnd = priceEndSearch || price_end
 
-  // Подгружаем бренды
+    // Обновляем стор на новое (либо то же самое, если ничего не изменилось)
+    setBrand(finalBrand)
+    setModel(finalModel)
+    setGeneration(finalGeneration)
+    setPriceRange(finalPriceStart, finalPriceEnd)
+
+    console.log(
+      'finalBrand',
+      finalBrand,
+      'finalModel',
+      finalModel,
+      'finalGeneration',
+      finalGeneration,
+      'finalPriceStart',
+      finalPriceStart,
+      'finalPriceEnd',
+      finalPriceEnd
+    )
+
+    // Синхронизируем форму
+    form.reset({
+      brand: finalBrand ?? undefined,
+      model: finalModel ?? undefined,
+      generation: finalGeneration ?? undefined,
+      price_start: finalPriceStart,
+      price_end: finalPriceEnd,
+    })
+  }, [searchParams, brand, model, generation, price_start, price_end])
+
+  // Загружаем бренды
   useEffect(() => {
     const loadBrands = async () => {
       const brandList = await fetchBrands()
@@ -186,7 +209,7 @@ const Filters = () => {
     loadBrands()
   }, [])
 
-  // Если выбрана другая марка – подгружаем модели для неё (если ещё не подгрузили)
+  // Загружаем модели для выбранного бренда
   useEffect(() => {
     if (!brand) return
     if (modelsByBrand[brand]) return // уже загружено
@@ -197,7 +220,7 @@ const Filters = () => {
     loadModels()
   }, [brand, modelsByBrand])
 
-  // Если выбранa другая модель – подгружаем поколения для неё (если ещё не подгрузили)
+  // Загружаем поколения для выбранной модели
   useEffect(() => {
     if (!model) return
     if (generationsByModel[model]) return
@@ -208,25 +231,78 @@ const Filters = () => {
     loadGenerations()
   }, [model, generationsByModel])
 
-  // Обработка сабмита – отправляем в query и параллельно пишем в zustand
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    // всё что number – переводим в строку для query
-    const entries = Object.fromEntries(
-      Object.entries(data).map(([key, value]) => [
-        key,
-        typeof value === 'number' ? value.toString() : value,
-      ])
-    )
-
-    // Обновляем zustand (если форма поменяла что-то)
+  // При сабмите формы – отправляем значения в стор И в URL
+  const onSubmit = (data: z.infer<typeof FormSchema>) => {
+    // Обновляем стор:
     setBrand(data.brand || null)
     setModel(data.model || null)
     setGeneration(data.generation || null)
     setPriceRange(data.price_start || 0, data.price_end || 100000)
 
-    // И меняем query-параметры так же, как у вас было
-    paramsChangeMany({ entries, locale, searchParams, router, startTransition })
+    // Перекладываем в query-параметры
+    const entries = Object.fromEntries(
+      Object.entries(data).map(([k, v]) => [
+        k,
+        typeof v === 'number' ? v.toString() : v,
+      ])
+    )
+    paramsChangeMany({
+      entries,
+      locale,
+      searchParams,
+      router,
+      startTransition,
+    })
   }
+
+  // Следим за тем, что пользователь вводит руками / двигает слайдер:
+  // Обновляем и форму (формы сам по себе это делает),
+  // и стор (чтобы открыть шторку заново и увидеть актуальный стейт)
+  // — Либо можно обновлять стор только при сабмите, на ваше усмотрение.
+
+  const handleBrandChange = (value: string) => {
+    form.setValue('brand', value)
+    setBrand(value)
+    // Сбрасываем модель и поколение
+    form.setValue('model', undefined)
+    form.setValue('generation', undefined)
+    setModel(null)
+    setGeneration(null)
+  }
+
+  const handleModelChange = (value: string) => {
+    form.setValue('model', value)
+    setModel(value)
+    // Сбрасываем поколение
+    form.setValue('generation', undefined)
+    setGeneration(null)
+  }
+
+  const handleGenerationChange = (value: string) => {
+    form.setValue('generation', value)
+    setGeneration(value)
+  }
+
+  // Слайдер цены
+  const handlePriceRangeChange = (range: number[]) => {
+    form.setValue('price_start', range[0])
+    form.setValue('price_end', range[1])
+    setPriceRange(range[0], range[1])
+  }
+  const handleMinInputChange = (val: number) => {
+    const currentMax = form.getValues('price_end') || 100000
+    form.setValue('price_start', val)
+    setPriceRange(val, currentMax)
+  }
+  const handleMaxInputChange = (val: number) => {
+    const currentMin = form.getValues('price_start') || 0
+    form.setValue('price_end', val)
+    setPriceRange(currentMin, val)
+  }
+
+  // Актуальные значения цены из стора (или формы)
+  const currentMin = form.watch('price_start') ?? 0
+  const currentMax = form.watch('price_end') ?? 100000
 
   return (
     <ScrollArea className='h-full'>
@@ -240,15 +316,7 @@ const Filters = () => {
               <FormItem>
                 <FormLabel>{t('Filters.BRAND')}</FormLabel>
                 <Select
-                  onValueChange={(value) => {
-                    field.onChange(value)
-                    setBrand(value)
-                    // При смене бренда – сбрасываем модель и поколение
-                    setModel(null)
-                    setGeneration(null)
-                    form.setValue('model', undefined)
-                    form.setValue('generation', undefined)
-                  }}
+                  onValueChange={handleBrandChange}
                   value={field.value || ''}
                 >
                   <FormControl>
@@ -278,13 +346,7 @@ const Filters = () => {
                 <FormItem>
                   <FormLabel>{t('Filters.MODEL')}</FormLabel>
                   <Select
-                    onValueChange={(value) => {
-                      field.onChange(value)
-                      setModel(value)
-                      // При смене модели – сбрасываем поколение
-                      setGeneration(null)
-                      form.setValue('generation', undefined)
-                    }}
+                    onValueChange={handleModelChange}
                     value={field.value || ''}
                   >
                     <FormControl>
@@ -293,7 +355,7 @@ const Filters = () => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {(modelsByBrand[brand] || []).map((m) => (
+                      {modelsByBrand[brand].map((m) => (
                         <SelectItem key={m.source} value={m.source}>
                           {m.name}
                         </SelectItem>
@@ -315,7 +377,7 @@ const Filters = () => {
                 <FormItem>
                   <FormLabel>{t('Filters.GENERATION')}</FormLabel>
                   <Select
-                    onValueChange={field.onChange}
+                    onValueChange={handleGenerationChange}
                     value={field.value || ''}
                   >
                     <FormControl>
@@ -326,7 +388,7 @@ const Filters = () => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {(generationsByModel[model] || []).map((gen) => (
+                      {generationsByModel[model].map((gen) => (
                         <SelectItem key={gen.source} value={gen.source}>
                           {gen.name}
                         </SelectItem>
@@ -343,58 +405,39 @@ const Filters = () => {
           <FormField
             control={form.control}
             name='price_start'
-            render={({ field: minField }) => (
+            render={() => (
               <FormField
                 control={form.control}
                 name='price_end'
-                render={({ field: maxField }) => {
-                  // Следим за изменением range на слайдере
-                  const handleRangeChange = (range: number[]) => {
-                    setPriceRange(range[0], range[1])
-                    minField.onChange(range[0])
-                    maxField.onChange(range[1])
-                  }
+                render={() => (
+                  <FormItem>
+                    <FormLabel>{t('Filters.PRICE_RANGE')}</FormLabel>
+                    <Slider
+                      min={0}
+                      max={100000}
+                      step={100}
+                      value={[currentMin, currentMax]}
+                      onValueChange={handlePriceRangeChange}
+                    />
 
-                  // При ручном вводе в инпут
-                  const handleMinInputChange = (val: number) => {
-                    setPriceRange(val, price_end)
-                    minField.onChange(val)
-                  }
-                  const handleMaxInputChange = (val: number) => {
-                    setPriceRange(price_start, val)
-                    maxField.onChange(val)
-                  }
-
-                  return (
-                    <FormItem>
-                      <FormLabel>{t('Filters.PRICE_RANGE')}</FormLabel>
-                      <Slider
-                        min={0}
-                        max={100000}
-                        step={500}
-                        value={[price_start, price_end]}
-                        onValueChange={handleRangeChange}
+                    <div className='flex justify-center gap-3 items-center text-sm text-muted-foreground pt-2'>
+                      <PriceSliderBlock
+                        min={currentMin}
+                        max={currentMax}
+                        onChange={handleMinInputChange}
+                        option='min'
                       />
-
-                      <div className='flex justify-center gap-3 items-center text-sm text-muted-foreground pt-2'>
-                        <PriceSliderBlock
-                          min={price_start}
-                          max={price_end}
-                          onChange={handleMinInputChange}
-                          option='min'
-                        />
-                        –
-                        <PriceSliderBlock
-                          min={price_start}
-                          max={price_end}
-                          onChange={handleMaxInputChange}
-                          option='max'
-                        />
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )
-                }}
+                      –
+                      <PriceSliderBlock
+                        min={currentMin}
+                        max={currentMax}
+                        onChange={handleMaxInputChange}
+                        option='max'
+                      />
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             )}
           />

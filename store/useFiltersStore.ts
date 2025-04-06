@@ -24,8 +24,8 @@ export const useFiltersStore = create(
       price_start: 0,
       price_end: 100000,
 
-      setBrand: (val) => set({ brand: val }),
-      setModel: (val) => set({ model: val }),
+      setBrand: (val) => set({ brand: val, model: null, generation: null }),
+      setModel: (val) => set({ model: val, generation: null }),
       setGeneration: (val) => set({ generation: val }),
       setPriceRange: (min, max) => set({ price_start: min, price_end: max }),
 
