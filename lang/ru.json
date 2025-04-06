@@ -8,11 +8,16 @@
   "Sidebar": {
     "TITLE": "Фильтры",
     "RESET": "Сбросить",
-    "DESCRIPTION": "Сторонние библиотеки, которые используются в этом проекте.",
-    "LIBRARIES": {
-      "NAME": "Название",
-      "VERSION": "Версия",
-      "DESCRIPTION": "Описание"
-    }
+    "APPLY": "Применить"
+  },
+  "Filters": {
+    "BRAND": "Бренд",
+    "MODEL": "Модель",
+    "GENERATION": "Поколение",
+    "SELECT_BRAND": "Выберите бренд",
+    "SELECT_MODEL": "Выберите модель",
+    "SELECT_GENERATION": "Выберите поколение",
+    "PRICE_RANGE": "Ценовой диапазон",
+    "APPLY_FILTERS": "Применить фильтры"
   }
 }

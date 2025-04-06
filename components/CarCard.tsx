@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/card'
 import Car from '@/types/car'
 import Image from 'next/image'
-import Cookies from 'js-cookie'
+import { useMobile } from '@/hooks/useMobile'
 
 interface CarCardProps {
   car: Car
@@ -18,29 +18,28 @@ interface CarCardProps {
 const CarCard: React.FC<CarCardProps> = (props) => {
   const { car } = props
   const fullName = car.brand.name + ' ' + car?.model?.name
-  const s3Token = Cookies.get('s3Token')
+  const isMobile = useMobile()
 
   return (
-    <Card className='flex flex-col space-y-3 w-full sm:w-auto'>
-      <CardHeader className='w-[100%] rounded-xl sm:w-[250px]'>
-        <CardTitle className='space-y-2 w-full p-3'>{fullName}</CardTitle>
+    <Card className='flex flex-col space-y-3 w-full sm:w-auto p-4'>
+      <CardHeader className='w-[100%] rounded-xl sm:w-[250px] p-0'>
+        <CardTitle className='space-y-2 w-full'>{fullName}</CardTitle>
         <CardDescription className='h-4 w-[70%]'>
           {car.category.name}
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className='p-0'>
         <Image
-          src={`${car.avatar_source}?Authorization=${s3Token}`}
-          width={100}
-          height={100}
+          src={`${car.avatar_source}`}
+          width={isMobile ? 400 : 250}
+          height={isMobile ? 200 : 150}
           alt='car'
           loading='lazy'
           className='rounded-lg'
         />
-        <p>{car.price}</p>
       </CardContent>
-      <CardFooter className='flex justify-between'>
-        <div className=''></div>
+      <CardFooter className='flex justify-between p-0'>
+        <p>{car.price}</p>
       </CardFooter>
     </Card>
   )

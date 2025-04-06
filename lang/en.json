@@ -8,5 +8,15 @@
   "Sidebar": {
     "TITLE": "Filters",
     "RESET": "Reset"
+  },
+  "Filters": {
+    "BRAND": "Brand",
+    "MODEL": "Model",
+    "GENERATION": "Generation",
+    "SELECT_BRAND": "Select brand",
+    "SELECT_MODEL": "Select model",
+    "SELECT_GENERATION": "Select generation",
+    "PRICE_RANGE": "Price range",
+    "APPLY_FILTERS": "Apply filters"
   }
 }

@@ -110,12 +110,8 @@ export function SiteHeader() {
                 className='relative h-8 w-8 rounded-full'
                 size='icon'
               >
-                <Avatar className='h-8 w-8'>
-                  <AvatarImage
-                    src='/placeholder.svg?height=32&width=32'
-                    alt='User'
-                  />
-                  <AvatarFallback>UN</AvatarFallback>
+                <Avatar className='rounded-md'>
+                  <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>

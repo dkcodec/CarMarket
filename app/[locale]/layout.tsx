@@ -1,5 +1,5 @@
 import { NextIntlClientProvider } from 'next-intl'
-import { SiteHeader } from '@/components/layout/header/Heder'
+import { SiteHeader } from '@/components/layout/header/SiteHeader'
 import { getLocale } from 'next-intl/server'
 
 export default async function LocaleLayout({

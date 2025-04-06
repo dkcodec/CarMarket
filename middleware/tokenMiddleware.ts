@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
-import axios from 'axios'
 import { cookies } from 'next/headers'
 
 const updateToken = async () => {
   try {
-    const response = await axios.get(
+    const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/s3/auth_token`
-    )
-    console.log('Token updated:', response.data.data)
-    return response.data.data
+    ).then((res) => {
+      if (!res.ok) {
+        throw new Error('Failed to fetch new token')
+      }
+      return res?.json().then((data) => {
+        return data?.data
+      })
+    })
   } catch (error) {
     console.error('Error while updating token:', error)
     return null
