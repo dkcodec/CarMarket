@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useTransition } from 'react'
+import React, { useEffect, useRef, useState, useTransition } from 'react'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -43,14 +43,21 @@ interface Generation {
   source: string
 }
 
-const fetchBrands = async (): Promise<Brand[]> => {
+// Zod-схема
+const FormSchema = z.object({
+  brand: z.string().optional(),
+  model: z.string().optional(),
+  generation: z.string().optional(),
+  price_start: z.number().optional(),
+  price_end: z.number().optional(),
+})
+
+async function fetchBrands(): Promise<Brand[]> {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/details/brands`,
       {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
       }
     )
     if (!res.ok) throw new Error('Failed to fetch brands')
@@ -62,14 +69,12 @@ const fetchBrands = async (): Promise<Brand[]> => {
   }
 }
 
-const fetchModels = async (brandSource: string): Promise<Model[]> => {
+async function fetchModels(brandSource: string): Promise<Model[]> {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/details/models?brand=${brandSource}`,
       {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
       }
     )
     if (!res.ok) throw new Error('Failed to fetch models')
@@ -81,14 +86,12 @@ const fetchModels = async (brandSource: string): Promise<Model[]> => {
   }
 }
 
-const fetchGenerations = async (modelSource: string): Promise<Generation[]> => {
+async function fetchGenerations(modelSource: string): Promise<Generation[]> {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/details/generations?model=${modelSource}`,
       {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
       }
     )
     if (!res.ok) throw new Error('Failed to fetch generations')
@@ -100,15 +103,6 @@ const fetchGenerations = async (modelSource: string): Promise<Generation[]> => {
   }
 }
 
-// Zod-схема
-const FormSchema = z.object({
-  brand: z.string().optional(),
-  model: z.string().optional(),
-  generation: z.string().optional(),
-  price_start: z.number().optional(),
-  price_end: z.number().optional(),
-})
-
 const Filters = () => {
   const t = useTranslations()
   const locale = useLocale()
@@ -116,7 +110,10 @@ const Filters = () => {
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
 
-  // Zustand-хранилище:
+  // Флаг, чтобы не «дергать» повторно reset
+  const didInitRef = useRef(false)
+
+  // Zustand‐хранилище:
   const {
     brand,
     setBrand,
@@ -129,9 +126,7 @@ const Filters = () => {
     setPriceRange,
   } = useFiltersStore()
 
-  console.log('brand', brand)
-
-  // Для списков:
+  // Данные для селектов
   const [brands, setBrands] = useState<Brand[]>([])
   const [modelsByBrand, setModelsByBrand] = useState<Record<string, Model[]>>(
     {}
@@ -140,67 +135,91 @@ const Filters = () => {
     Record<string, Generation[]>
   >({})
 
-  // Регистрируем форму (React Hook Form), чтобы валидировать и оформлять сабмит
+  // Форма
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      brand: brand || undefined,
-      model: model || undefined,
-      generation: generation || undefined,
+      brand: brand ?? undefined,
+      model: model ?? undefined,
+      generation: generation ?? undefined,
       price_start: price_start,
       price_end: price_end,
     },
   })
 
-  console.log('form', form.getValues())
-  console.log('brand', brand, 'model', model, 'generation', generation)
-  console.log('price_start', price_start, 'price_end', price_end)
-
+  // ---------------------------------------------------------
+  // 1) Инициализация из URL, но только когда все нужные данные загружены
+  // ---------------------------------------------------------
   useEffect(() => {
-    // Читаем из searchParams
-    const brandSearch = searchParams.get('brand')
-    const modelSearch = searchParams.get('model')
-    const generationSearch = searchParams.get('generation')
-    const priceStartSearch = Number(searchParams.get('price_start'))
-    const priceEndSearch = Number(searchParams.get('price_end'))
+    // Не перезапускать, если уже инициализировали однажды
+    if (didInitRef.current) return
 
-    // Если в query-параметрах чего-то нет — используем текущее из стор
-    const finalBrand = brandSearch ?? brand
-    const finalModel = modelSearch ?? model
-    const finalGeneration = generationSearch ?? generation
-    const finalPriceStart = priceStartSearch || price_start
-    const finalPriceEnd = priceEndSearch || price_end
+    // Если бренды не загружены — ещё рано
+    if (!brands.length) return
 
-    // Обновляем стор на новое (либо то же самое, если ничего не изменилось)
-    setBrand(finalBrand)
-    setModel(finalModel)
-    setGeneration(finalGeneration)
-    setPriceRange(finalPriceStart, finalPriceEnd)
+    const brandSearch = searchParams.get('brand') ?? null
+    const modelSearch = searchParams.get('model') ?? null
+    const generationSearch = searchParams.get('generation') ?? null
 
-    console.log(
-      'finalBrand',
-      finalBrand,
-      'finalModel',
-      finalModel,
-      'finalGeneration',
-      finalGeneration,
-      'finalPriceStart',
-      finalPriceStart,
-      'finalPriceEnd',
-      finalPriceEnd
-    )
+    const priceStartSearch = Number(searchParams.get('price_start')) || 0
+    const priceEndSearch = Number(searchParams.get('price_end')) || 100000
 
-    // Синхронизируем форму
+    // Проверяем, есть ли brandSearch среди загруженных брендов
+    const brandExists = brandSearch
+      ? brands.some((b) => b.source === brandSearch)
+      : false
+
+    // Если brandSearch валиден и modelsByBrand[brandSearch] еще не подгружен — подождем следующий рендер
+    if (brandSearch && !modelsByBrand[brandSearch]) return
+
+    // Аналогично для modelSearch
+    let modelExists = false
+    if (brandSearch && brandExists && modelSearch) {
+      const models = modelsByBrand[brandSearch] || []
+      modelExists = models.some((m) => m.source === modelSearch)
+      // если models для brandSearch не загружены, выше уже return
+    }
+
+    // Аналогично для generationSearch
+    let generationExists = false
+    if (modelExists && generationSearch && generationsByModel[modelSearch!]) {
+      const gens = generationsByModel[modelSearch!] || []
+      generationExists = gens.some((g) => g.source === generationSearch)
+    }
+
+    // Теперь мы можем «инициализировать»
+    // (даже если brandSearch = null, всё окей — сбросим поля)
+    setBrand(brandExists ? brandSearch : null)
+    setModel(modelExists ? modelSearch : null)
+    setGeneration(generationExists ? generationSearch : null)
+    setPriceRange(priceStartSearch, priceEndSearch)
+
+    // Сбрасываем форму
     form.reset({
-      brand: finalBrand ?? undefined,
-      model: finalModel ?? undefined,
-      generation: finalGeneration ?? undefined,
-      price_start: finalPriceStart,
-      price_end: finalPriceEnd,
+      brand: brandExists ? brandSearch || undefined : undefined,
+      model: modelExists ? modelSearch || undefined : undefined,
+      generation: generationExists ? generationSearch || undefined : undefined,
+      price_start: priceStartSearch,
+      price_end: priceEndSearch,
     })
-  }, [searchParams, brands])
 
-  // Загружаем бренды
+    // Запрещаем повторную инициализацию
+    didInitRef.current = true
+  }, [
+    // Пришли новые параметры (или первая загрузка)
+    searchParams,
+    // Пришли бренды
+    brands,
+    // Если модели/поколения для соответствующих brand/model всё ещё не загружены — не сможем проверить.
+    modelsByBrand,
+    generationsByModel,
+    // Форма/стор не нужны в зависимостях
+  ])
+
+  // ---------------------------------------------------------
+  // 2) Загрузка данных (бренды, модели, поколения)
+  // ---------------------------------------------------------
+  // Бренды
   useEffect(() => {
     const loadBrands = async () => {
       const brandList = await fetchBrands()
@@ -209,58 +228,75 @@ const Filters = () => {
     loadBrands()
   }, [])
 
-  // Загружаем модели для выбранного бренда
+  // Модели (подгружаются при смене brand, если ещё не кешированы)
   useEffect(() => {
     if (!brand) return
-    if (modelsByBrand[brand]) return // уже загружено
-    const loadModels = async () => {
-      const list = await fetchModels(brand)
+    if (modelsByBrand[brand]) return // уже в кэше
+
+    fetchModels(brand).then((list) => {
       setModelsByBrand((prev) => ({ ...prev, [brand]: list }))
-    }
-    loadModels()
+    })
   }, [brand, modelsByBrand])
 
-  // Загружаем поколения для выбранной модели
+  // Поколения (подгружаются при смене model, если не кешированы)
   useEffect(() => {
     if (!model) return
-    if (generationsByModel[model]) return
-    const loadGenerations = async () => {
-      const list = await fetchGenerations(model)
+    if (generationsByModel[model]) return // уже в кэше
+
+    fetchGenerations(model).then((list) => {
       setGenerationsByModel((prev) => ({ ...prev, [model]: list }))
-    }
-    loadGenerations()
+    })
   }, [model, generationsByModel])
 
+  // ---------------------------------------------------------
+  // 3) Сабмит: чистим «мусор» и пишем валидные данные
+  // ---------------------------------------------------------
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
+    // Сформируем объект для URL
     const cleanData: Record<string, string> = {}
+    console.log(data)
 
+    // Проверим валидность model / generation для текущего brand
+    const possibleModels = data.brand ? modelsByBrand[data.brand] || [] : []
+    const modelValid = possibleModels.some((m) => m.source === data.model)
+
+    const possibleGenerations = modelValid
+      ? generationsByModel[data.model || ''] || []
+      : []
+    const generationValid = possibleGenerations.some(
+      (g) => g.source === data.generation
+    )
+
+    // brand
     if (data.brand) {
-      cleanData.brand = data.brand
-
-      if (data.model) {
-        cleanData.model = data.model
-
-        if (data.generation) {
-          cleanData.generation = data.generation
-        }
-      }
+      cleanData.brand = data.brand || ''
+    }
+    // model (только если подходит под brand)
+    if (modelValid) {
+      cleanData.model = data.model || ''
+    }
+    // generation (только если подходит под model)
+    if (generationValid) {
+      cleanData.generation = data.generation || ''
     }
 
+    // price
     if (typeof data.price_start === 'number') {
       cleanData.price_start = data.price_start.toString()
     }
-
     if (typeof data.price_end === 'number') {
       cleanData.price_end = data.price_end.toString()
     }
 
-    // Сохраняем в стор
+    // Обновляем Zustand
     setBrand(data.brand || null)
-    setModel(data.brand ? data.model || null : null)
-    setGeneration(data.model ? data.generation || null : null)
+    setModel(modelValid ? data.model || null : null)
+    setGeneration(generationValid ? data.generation || null : null)
     setPriceRange(data.price_start || 0, data.price_end || 100000)
 
-    // Обновляем параметры в URL
+    didInitRef.current = false
+
+    // Обновляем URL
     paramsChangeMany({
       entries: cleanData,
       locale,
@@ -270,20 +306,24 @@ const Filters = () => {
     })
   }
 
-  // Следим за тем, что пользователь вводит руками / двигает слайдер:
-  // Обновляем и форму (формы сам по себе это делает),
-  // и стор (чтобы открыть шторку заново и увидеть актуальный стейт)
-  // — Либо можно обновлять стор только при сабмите, на ваше усмотрение.
-
+  // ---------------------------------------------------------
+  // 4) Хендлеры: при смене brand/model — сбрасываем «дочерние» поля в форме и стор
+  // ---------------------------------------------------------
   const handleBrandChange = (value: string) => {
+    // Обновляем форму и стор
     form.setValue('brand', value)
     setBrand(value)
 
+    // Сбрасываем модель/поколение
     form.setValue('model', undefined)
     setModel(null)
 
     form.setValue('generation', undefined)
     setGeneration(null)
+
+    // Сбрасываем кэш моделей/поколений (если хочешь)
+    setModelsByBrand({})
+    setGenerationsByModel({})
   }
 
   const handleModelChange = (value: string) => {
@@ -292,6 +332,8 @@ const Filters = () => {
 
     form.setValue('generation', undefined)
     setGeneration(null)
+
+    setGenerationsByModel({})
   }
 
   const handleGenerationChange = (value: string) => {
@@ -299,7 +341,9 @@ const Filters = () => {
     setGeneration(value)
   }
 
-  // Слайдер цены
+  // ---------------------------------------------------------
+  // 5) Слайдер цены (это уже было)
+  // ---------------------------------------------------------
   const handlePriceRangeChange = (range: number[]) => {
     form.setValue('price_start', range[0])
     form.setValue('price_end', range[1])
@@ -316,10 +360,15 @@ const Filters = () => {
     setPriceRange(currentMin, val)
   }
 
-  // Актуальные значения цены из стора (или формы)
+  // ---------------------------------------------------------
+  // 6) Текущее значение слайдера (цена) — либо из формы, либо дефолт
+  // ---------------------------------------------------------
   const currentMin = form.watch('price_start') ?? 0
   const currentMax = form.watch('price_end') ?? 100000
 
+  // ---------------------------------------------------------
+  // РЕНДЕР
+  // ---------------------------------------------------------
   return (
     <ScrollArea className='h-full'>
       <Form {...form}>
@@ -458,6 +507,7 @@ const Filters = () => {
             )}
           />
 
+          {/* КНОПКА ПОДТВЕРЖДЕНИЯ */}
           <Button type='submit' className='fixed bottom-4'>
             {t('Filters.APPLY_FILTERS')}
           </Button>

@@ -14,6 +14,13 @@ export const paramsChangeMany = ({
   startTransition,
 }: ParamsChangeManyProps) => {
   const params = new URLSearchParams(searchParams)
+  console.log('entries', entries)
+
+  for (const key of Array.from(params.keys())) {
+    if (!(key in entries)) {
+      params.delete(key)
+    }
+  }
 
   for (const [key, value] of Object.entries(entries)) {
     if (value !== undefined && value !== null && value !== '') {
@@ -24,6 +31,8 @@ export const paramsChangeMany = ({
       }
     }
   }
+
+  console.log('params', params.toString())
 
   startTransition(() => {
     router.replace(`/${locale}?${params.toString()}`)
