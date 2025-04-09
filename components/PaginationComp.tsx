@@ -31,7 +31,7 @@ const PaginationComp: React.FC<PaginationProps> = (params) => {
   }, [totalItems])
 
   const handlePageChange = (newPage: number) => {
-    if (newPage < 1 || newPage > totalPages) return
+    if (newPage <= 1 || newPage >= totalPages) return
     setPagination((prev) => ({ ...prev, pageIndex: newPage }))
     setPageIndex && setPageIndex(newPage)
   }
