@@ -19,7 +19,7 @@ interface PaginationProps {
 const PaginationComp: React.FC<PaginationProps> = (params) => {
   const { totalItems, pageIndex, pageSize, setPageIndex } = params
   const [pagination, setPagination] = useState({
-    pageIndex: pageIndex || 1,
+    pageIndex: pageIndex || 0,
     pageSize: pageSize || 9,
   })
 
