@@ -31,7 +31,7 @@ const PaginationComp: React.FC<PaginationProps> = (params) => {
   }, [totalItems])
 
   const handlePageChange = (newPage: number) => {
-    if (newPage <= 1 || newPage >= totalPages) return
+    if (newPage < 0 || newPage >= totalPages) return
     setPagination((prev) => ({ ...prev, pageIndex: newPage }))
     setPageIndex && setPageIndex(newPage)
   }
@@ -66,10 +66,10 @@ const PaginationComp: React.FC<PaginationProps> = (params) => {
             <PaginationItem key={page}>
               <PaginationLink
                 href='#'
-                isActive={page === pagination.pageIndex}
+                isActive={page - 1 === pagination.pageIndex}
                 onClick={(e) => {
                   e.preventDefault()
-                  handlePageChange(page)
+                  handlePageChange(page - 1)
                 }}
               >
                 {page}
