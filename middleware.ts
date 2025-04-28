@@ -8,9 +8,11 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get('auth-storage')?.value
   const { pathname } = request.nextUrl
 
+  console.log(token)
+
   // Редирект с корневого пути на локализованную версию
   if (pathname === '/') {
-    return NextResponse.redirect(new URL('/ru', request.url))
+    return NextResponse.redirect(new URL('/en', request.url))
   }
 
   // Проверяем, является ли маршрут защищенным
@@ -28,7 +30,7 @@ export function middleware(request: NextRequest) {
   // Если пользователь авторизован и пытается зайти на страницу авторизации,
   // перенаправляем на главную страницу
   if (pathname === '/auth' && token) {
-    return NextResponse.redirect(new URL('/', request.url))
+    return NextResponse.redirect(new URL('/en', request.url))
   }
 
   return NextResponse.next()

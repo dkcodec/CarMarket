@@ -17,12 +17,12 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { useTheme } from 'next-themes'
 
 export default function ProfilePage() {
   const t = useTranslations('Profile')
   const [activeTab, setActiveTab] = useState('personal')
-
-  useEffect(() => {}, [])
+  const { theme, setTheme, systemTheme } = useTheme()
 
   // Mock user data - in a real app, this would come from an API or context
   const user = {
@@ -57,7 +57,19 @@ export default function ProfilePage() {
             </p>
           </div>
           <div className='ml-auto'>
-            <Button variant='outline'>{t('editProfile')}</Button>
+            <Tabs
+              defaultValue={theme || systemTheme}
+              onValueChange={(value) => setTheme(value)}
+            >
+              <TabsList>
+                <TabsTrigger value='dark' className='w-full'>
+                  {t('darkMode')}
+                </TabsTrigger>
+                <TabsTrigger value='light' className='w-full'>
+                  {t('lightMode')}
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
         </div>
 

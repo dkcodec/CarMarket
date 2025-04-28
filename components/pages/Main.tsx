@@ -14,8 +14,11 @@ import CarService from '@/services/carService'
 const Main: React.FC = () => {
   const t = useTranslations()
   const searchParams = useSearchParams()
-  const city =
-    String(getFromLocalStorage('city')).toLocaleLowerCase() || 'astana'
+  const city = String(
+    getFromLocalStorage('city') || 'astana'
+  ).toLocaleLowerCase()
+
+  const validatedCity = typeof city === 'string' ? city : 'astana'
 
   const [cars, setCars] = useState<Car[]>([])
   const [loading, setLoading] = useState(true)
@@ -30,8 +33,10 @@ const Main: React.FC = () => {
       try {
         setLoading(true)
 
+        console.log(validatedCity)
+
         const query: Record<string, string> = {
-          city: city || 'astana',
+          city: validatedCity,
           limit: String(pageSize),
           offset: String(pageIndex),
         }
@@ -63,7 +68,7 @@ const Main: React.FC = () => {
         setLoading(false)
       }
     })()
-  }, [city, pageIndex, pageSize, searchParams])
+  }, [validatedCity, pageIndex, pageSize, searchParams])
 
   return (
     <main className='flex-1 p-4 w-inherit overflow-y-auto no-scrollbar h-[calc(100vh-135px)]'>

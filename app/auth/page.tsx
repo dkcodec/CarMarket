@@ -9,8 +9,14 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
+import { useAuth } from '@/hooks/useAuth'
+import { redirect } from 'next/navigation'
 
 export default function AuthPage() {
+  const { isAuthenticated } = useAuth()
+  if (isAuthenticated) {
+    redirect('/')
+  }
   return (
     <div className='min-h-screen flex items-center justify-center bg-background p-4'>
       <Card className='w-full max-w-md'>

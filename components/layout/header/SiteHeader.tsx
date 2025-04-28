@@ -13,13 +13,20 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useOpenCage } from '@/hooks/useOpenCage'
 import { useTranslations } from 'next-intl'
+import { useAuth } from '@/hooks/useAuth'
+import { useLocale } from 'next-intl'
+
 export function SiteHeader() {
   const t = useTranslations()
   const city = useOpenCage()
+  const { isAuthenticated } = useAuth()
   const [location, setLocation] = useState('')
+  const locale = useLocale()
+
   useEffect(() => {
     setLocation(city)
   }, [city])
+
   return (
     <header className='sticky flex justify-center top-0 z-50 w-full border-b bg-white text-black dark:bg-black  dark:text-white px-2'>
       <div className='container flex h-16 items-center justify-between max-w-[1500px]'>
@@ -104,28 +111,43 @@ export function SiteHeader() {
               2
             </span>
           </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant='ghost'
-                className='relative h-8 w-8 rounded-full'
-                size='icon'
-              >
-                <Avatar className='rounded-md'>
-                  <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align='end'>
-              <DropdownMenuItem>{t('Header.Profile')}</DropdownMenuItem>
-              <DropdownMenuItem>{t('Header.Settings')}</DropdownMenuItem>
-              <DropdownMenuItem>{t('Header.Logout')}</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <Button className='hidden bg-blue-600 text-white hover:bg-blue-700 sm:flex'>
-            <Plus className='mr-2 h-4 w-4' />
-            Sell Car
-          </Button>
+          {isAuthenticated ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant='ghost'
+                  className='relative h-8 w-8 rounded-full'
+                  size='icon'
+                >
+                  <Avatar className='rounded-md'>
+                    <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align='end'>
+                <DropdownMenuItem>
+                  <Link
+                    href={`/${locale}/profile`}
+                    style={{ textDecoration: 'none', width: '100%' }}
+                  >
+                    {t('Header.Profile')}
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link
+                    href={`/${locale}/logout`}
+                    style={{ textDecoration: 'none', width: '100%' }}
+                  >
+                    {t('Header.Logout')}
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button className='relative h-8 w-8 px-8 bg-blue-600 text-white hover:bg-blue-700'>
+              <Link href='/auth'>{t('Header.Login')}</Link>
+            </Button>
+          )}
         </div>
       </div>
     </header>
