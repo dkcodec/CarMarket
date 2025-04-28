@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -36,13 +35,13 @@ const PaginationComp: React.FC<PaginationProps> = (params) => {
     setPageIndex && setPageIndex(newPage)
   }
 
-  const generatePageNumbers = () => {
+  const generatePageNumbers = useCallback(() => {
     const pages = []
     for (let i = 1; i <= totalPages; i++) {
       pages.push(i)
     }
     return pages
-  }
+  }, [totalPages])
 
   return (
     <Pagination>
@@ -59,8 +58,8 @@ const PaginationComp: React.FC<PaginationProps> = (params) => {
 
         {generatePageNumbers()
           .slice(
-            Math.max(0, pagination.pageIndex - 2),
-            Math.min(totalPages, pagination.pageIndex + 1)
+            Math.max(0, pagination.pageIndex - 1),
+            Math.min(totalPages, pagination.pageIndex + 2)
           )
           .map((page) => (
             <PaginationItem key={page}>

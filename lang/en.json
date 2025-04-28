@@ -18,5 +18,54 @@
     "SELECT_GENERATION": "Select generation",
     "PRICE_RANGE": "Price range",
     "APPLY_FILTERS": "Apply filters"
+  },
+  "Profile": {
+    "editProfile": "Edit Profile",
+    "personalInfo": "Personal Info",
+    "security": "Security",
+    "activity": "Activity",
+    "personalInformation": "Personal Information",
+    "personalInfoDesc": "Update your personal details and preferences",
+    "fullName": "Full Name",
+    "email": "Email",
+    "location": "Location",
+    "phoneNumber": "Phone Number",
+    "bio": "Bio",
+    "saveChanges": "Save Changes",
+    "securitySettings": "Security Settings",
+    "securitySettingsDesc": "Manage your password and account security",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "twoFactorAuth": "Two-Factor Authentication",
+    "twoFactorAuthDesc": "Add an extra layer of security to your account",
+    "enable2FA": "Enable 2FA",
+    "updateSecurity": "Update Security",
+    "recentActivity": "Recent Activity",
+    "recentActivityDesc": "View your recent actions and interactions",
+    "viewedListing": "Viewed listing for {car}",
+    "daysAgo": "{days} days ago"
+  },
+  "Header": {
+    "Profile": "Profile",
+    "Settings": "Settings",
+    "Logout": "Logout"
+  },
+  "auth": {
+    "title": "Login",
+    "description": "Enter your phone number to receive a verification code",
+    "phone": {
+      "label": "Phone Number",
+      "placeholder": "+1 (___) ___-__-__",
+      "button": "Get Code",
+      "error": "Invalid phone number"
+    },
+    "code": {
+      "label": "Verification Code",
+      "placeholder": "Enter the code from SMS",
+      "button": "Verify",
+      "changePhone": "Change Phone",
+      "error": "Invalid verification code"
+    }
   }
 }

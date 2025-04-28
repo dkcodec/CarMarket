@@ -12,9 +12,19 @@ import {
 import { SlidersHorizontal } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Filters from '@/components/Filters'
+import { useRouter } from 'next/navigation'
+import { useFiltersStore } from '@/store/useFiltersStore'
 
 const SheetBar: React.FC = () => {
   const t = useTranslations()
+  const router = useRouter()
+  const { resetFilters } = useFiltersStore()
+
+  const handleReset = () => {
+    resetFilters()
+    router.push('/')
+  }
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -26,7 +36,11 @@ const SheetBar: React.FC = () => {
         <SheetHeader className='p-4 border-b'>
           <SheetTitle className='flex justify-between items-center mt-4'>
             <div>{t('Sidebar.TITLE')}</div>
-            <Button variant='ghost' className='text-red-400'>
+            <Button
+              variant='ghost'
+              className='text-red-400'
+              onClick={handleReset}
+            >
               {t('Sidebar.RESET')}
             </Button>
           </SheetTitle>

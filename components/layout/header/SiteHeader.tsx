@@ -12,8 +12,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useOpenCage } from '@/hooks/useOpenCage'
-
+import { useTranslations } from 'next-intl'
 export function SiteHeader() {
+  const t = useTranslations()
   const city = useOpenCage()
   const [location, setLocation] = useState('')
   useEffect(() => {
@@ -116,9 +117,9 @@ export function SiteHeader() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem>{t('Header.Profile')}</DropdownMenuItem>
+              <DropdownMenuItem>{t('Header.Settings')}</DropdownMenuItem>
+              <DropdownMenuItem>{t('Header.Logout')}</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <Button className='hidden bg-blue-600 text-white hover:bg-blue-700 sm:flex'>

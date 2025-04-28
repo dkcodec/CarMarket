@@ -19,5 +19,54 @@
     "SELECT_GENERATION": "Выберите поколение",
     "PRICE_RANGE": "Ценовой диапазон",
     "APPLY_FILTERS": "Применить фильтры"
+  },
+  "Profile": {
+    "editProfile": "Редактировать профиль",
+    "personalInfo": "Личная информация",
+    "security": "Безопасность",
+    "activity": "Активность",
+    "personalInformation": "Личная информация",
+    "personalInfoDesc": "Обновите ваши личные данные и настройки",
+    "fullName": "Полное имя",
+    "email": "Электронная почта",
+    "location": "Местоположение",
+    "phoneNumber": "Номер телефона",
+    "bio": "О себе",
+    "saveChanges": "Сохранить изменения",
+    "securitySettings": "Настройки безопасности",
+    "securitySettingsDesc": "Управление паролем и безопасностью аккаунта",
+    "currentPassword": "Текущий пароль",
+    "newPassword": "Новый пароль",
+    "confirmPassword": "Подтвердите новый пароль",
+    "twoFactorAuth": "Двухфакторная аутентификация",
+    "twoFactorAuthDesc": "Добавьте дополнительный уровень безопасности для вашего аккаунта",
+    "enable2FA": "Включить 2FA",
+    "updateSecurity": "Обновить безопасность",
+    "recentActivity": "Недавняя активность",
+    "recentActivityDesc": "Просмотр ваших недавних действий и взаимодействий",
+    "viewedListing": "Просмотрено объявление {car}",
+    "daysAgo": "{days} дней назад"
+  },
+  "Header": {
+    "Profile": "Профиль",
+    "Settings": "Настройки",
+    "Logout": "Выйти"
+  },
+  "auth": {
+    "title": "Вход в аккаунт",
+    "description": "Введите номер телефона для получения кода подтверждения",
+    "phone": {
+      "label": "Номер телефона",
+      "placeholder": "+7 (___) ___-__-__",
+      "button": "Получить код",
+      "error": "Неверный номер телефона"
+    },
+    "code": {
+      "label": "Код подтверждения",
+      "placeholder": "Введите код из SMS",
+      "button": "Подтвердить",
+      "changePhone": "Изменить номер",
+      "error": "Неверный код подтверждения"
+    }
   }
 }

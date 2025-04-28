@@ -9,6 +9,7 @@ import { useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import { Skeleton } from '../ui/skeleton'
+import CarService from '@/services/carService'
 
 const Main: React.FC = () => {
   const t = useTranslations()
@@ -53,16 +54,7 @@ const Main: React.FC = () => {
         const queryString = new URLSearchParams(query).toString()
         console.log(queryString)
 
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/cars/main?${queryString}`,
-          {
-            method: 'GET',
-          }
-        )
-        if (!res.ok) {
-          throw new Error('Failed to fetch data')
-        }
-        const data = await res.json()
+        const data = await CarService.getCars(query)
         setCars(data?.data?.cars || [])
         setTotalCars(data?.data?.total_count || 0)
       } catch (error) {

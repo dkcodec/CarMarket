@@ -1,13 +1,48 @@
-import createMiddleware from 'next-intl/middleware'
-import { routing } from './i18n/routing'
-import { NextRequest } from 'next/server'
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
-// Создаём объединённое middleware
-export default async function combinedMiddleware(req: NextRequest) {
-  return createMiddleware(routing)(req)
+// Список защищенных маршрутов
+const protectedRoutes = ['/profile', '/favorites', '/settings']
+
+export function middleware(request: NextRequest) {
+  const token = request.cookies.get('auth-storage')?.value
+  const { pathname } = request.nextUrl
+
+  // Редирект с корневого пути на локализованную версию
+  if (pathname === '/') {
+    return NextResponse.redirect(new URL('/ru', request.url))
+  }
+
+  // Проверяем, является ли маршрут защищенным
+  const isProtectedRoute = protectedRoutes.some((route) =>
+    pathname.startsWith(route)
+  )
+
+  // Если маршрут защищенный и нет токена, перенаправляем на страницу авторизации
+  if (isProtectedRoute && !token) {
+    const url = new URL('/auth', request.url)
+    url.searchParams.set('from', pathname)
+    return NextResponse.redirect(url)
+  }
+
+  // Если пользователь авторизован и пытается зайти на страницу авторизации,
+  // перенаправляем на главную страницу
+  if (pathname === '/auth' && token) {
+    return NextResponse.redirect(new URL('/', request.url))
+  }
+
+  return NextResponse.next()
 }
 
-// Конфигурация для применения middleware
 export const config = {
-  matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)', // Применяется ко всем путям, кроме исключений
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
 }
