@@ -127,6 +127,11 @@ class ApiClient {
       ...config,
       url,
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        ...config.headers,
+      },
       body: data ? JSON.stringify(data) : undefined,
     })
   }
@@ -212,16 +217,12 @@ api.addRequestInterceptor(async (config) => {
 
 // Добавляем интерцептор для обработки ошибок и обновления токена
 api.addErrorInterceptor(async (error) => {
-  // Проверяем, является ли ошибка ответом от сервера
   if (error instanceof Response && error.status === 401) {
-    // Создаем объект ошибки с конфигурацией запроса
     const apiError = error as ApiError
     const config = apiError.config || { url: '' }
 
-    // Проверяем, не является ли запрос повторным и не на обновление токена
     if (!config._retry && !config.url.includes('/auth/refresh')) {
       if (api.isTokenRefreshing) {
-        // Если уже идет обновление токена, добавляем запрос в очередь
         return api.addToQueue(config)
       }
 
@@ -229,23 +230,16 @@ api.addErrorInterceptor(async (error) => {
       api.isTokenRefreshing = true
 
       try {
-        // Обновляем токен
         const { access_token, refresh_token } = await api.refreshToken()
-
-        // Обновляем токены в хранилище
         useAuth.getState().updateTokens(access_token, refresh_token)
-
-        // Обрабатываем очередь запросов
         api.processQueue(null, access_token)
 
-        // Повторяем исходный запрос с новым токеном
         config.headers = {
           ...config.headers,
           Authorization: `Bearer ${access_token}`,
         }
         return api.request(config)
       } catch (refreshError) {
-        // Если не удалось обновить токен, очищаем аутентификацию
         api.processQueue(refreshError as Error, null)
         useAuth.getState().clearAuth()
         throw refreshError

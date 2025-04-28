@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Phone, ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { Phone, ArrowLeft, CheckCircle2, Loader2 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { useRouter } from 'next/navigation'
 import AuthService from '@/services/authService'
@@ -32,6 +32,7 @@ export const PhoneAuthForm = () => {
   const [step, setStep] = useState<'phone' | 'code'>('phone')
   const [phone, setPhone] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   // Форма для ввода телефона
   const phoneForm = useForm<PhoneFormData>({
@@ -47,6 +48,7 @@ export const PhoneAuthForm = () => {
   const onPhoneSubmit = async (data: PhoneFormData) => {
     try {
       setError(null)
+      setIsLoading(true)
       // TODO: Заменить на ваш API endpoint
       const response = await AuthService.requestCode(
         data.phone.replace(/\s/g, '')
@@ -63,6 +65,8 @@ export const PhoneAuthForm = () => {
       }
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Error sending code')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -70,16 +74,19 @@ export const PhoneAuthForm = () => {
   const onCodeSubmit = async (data: CodeFormData) => {
     try {
       setError(null)
+      setIsLoading(true)
       const response = await AuthService.verifyCode(phone, data.code)
 
       if (response) {
-        // router.push('/')
+        router.push('/')
       } else {
         const errorData = await response
         throw new Error(errorData.message || 'Error verifying code')
       }
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Error verifying code')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -126,7 +133,7 @@ export const PhoneAuthForm = () => {
                 )}
               </div>
               <Button type='submit' className='w-full h-11'>
-                Get Code
+                {isLoading ? <Spinner /> : 'Get Code'}
               </Button>
             </form>
           </div>
@@ -161,7 +168,7 @@ export const PhoneAuthForm = () => {
                 )}
               </div>
               <Button type='submit' className='w-full h-11'>
-                Verify
+                {isLoading ? <Spinner /> : 'Verify'}
               </Button>
               <Button
                 type='button'
@@ -177,5 +184,13 @@ export const PhoneAuthForm = () => {
         </div>
       </CardContent>
     </Card>
+  )
+}
+
+const Spinner = () => {
+  return (
+    <div className='flex items-center justify-center'>
+      <Loader2 className='w-4 h-4 animate-spin' />
+    </div>
   )
 }

@@ -31,7 +31,7 @@ const Main: React.FC = () => {
         setLoading(true)
 
         const query: Record<string, string> = {
-          city,
+          city: city || 'astana',
           limit: String(pageSize),
           offset: String(pageIndex),
         }

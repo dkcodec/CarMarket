@@ -9,15 +9,18 @@ class AuthService {
 
   static async verifyCode(phone_number: string, code: string) {
     const response = await api.post('/auth/verify_code', { phone_number, code })
-    console.log(response)
-    const data = await response.json()
-    console.log(data)
 
-    // Если аутентификация успешна, сохраняем токены
-    if (data.access_token && data.refresh_token) {
+    if (!response.ok) {
+      throw new Error('Verification failed')
+    }
+
+    const data = await response.json()
+    console.log('Auth response:', data)
+
+    if (data.data.access_token && data.data.refresh_token) {
       useAuth
         .getState()
-        .setAuth(phone_number, data.access_token, data.refresh_token)
+        .setAuth(phone_number, data.data.access_token, data.data.refresh_token)
     }
 
     return data
