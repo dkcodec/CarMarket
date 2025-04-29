@@ -21,8 +21,7 @@
   },
   "Profile": {
     "editProfile": "Edit Profile",
-    "darkMode": "Dark Mode",
-    "lightMode": "Light Mode",
+
     "personalInfo": "Personal Info",
     "security": "Security",
     "activity": "Activity",
@@ -52,7 +51,10 @@
     "Profile": "Profile",
     "Settings": "Settings",
     "Logout": "Logout",
-    "Login": "Login"
+    "Login": "Login",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
+    "systemMode": "System Mode"
   },
   "auth": {
     "title": "Login",

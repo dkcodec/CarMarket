@@ -51,7 +51,10 @@
     "Profile": "Профиль",
     "Settings": "Настройки",
     "Logout": "Выйти",
-    "Login": "Войти"
+    "Login": "Войти",
+    "darkMode": "Темная тема",
+    "lightMode": "Светлая тема",
+    "systemMode": "Системная тема"
   },
   "auth": {
     "title": "Вход в аккаунт",

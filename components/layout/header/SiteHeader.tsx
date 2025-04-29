@@ -15,17 +15,27 @@ import { useOpenCage } from '@/hooks/useOpenCage'
 import { useTranslations } from 'next-intl'
 import { useAuth } from '@/hooks/useAuth'
 import { useLocale } from 'next-intl'
+import Cookies from 'js-cookie'
+import { useRouter } from 'next/navigation'
 
 export function SiteHeader() {
   const t = useTranslations()
   const city = useOpenCage()
-  const { isAuthenticated } = useAuth()
-  const [location, setLocation] = useState('')
+  const { isAuthenticated, clearAuth } = useAuth()
   const locale = useLocale()
+  const router = useRouter()
+
+  const [location, setLocation] = useState('')
 
   useEffect(() => {
     setLocation(city)
   }, [city])
+
+  const handleLogout = () => {
+    clearAuth()
+    Cookies.remove('auth-storage')
+    router.push(`/${locale}/auth`)
+  }
 
   return (
     <header className='sticky flex justify-center top-0 z-50 w-full border-b bg-white text-black dark:bg-black  dark:text-white px-2'>
@@ -133,13 +143,8 @@ export function SiteHeader() {
                     {t('Header.Profile')}
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link
-                    href={`/${locale}/logout`}
-                    style={{ textDecoration: 'none', width: '100%' }}
-                  >
-                    {t('Header.Logout')}
-                  </Link>
+                <DropdownMenuItem onClick={handleLogout}>
+                  {t('Header.Logout')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

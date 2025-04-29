@@ -68,6 +68,9 @@ export default function ProfilePage() {
                 <TabsTrigger value='light' className='w-full'>
                   {t('lightMode')}
                 </TabsTrigger>
+                <TabsTrigger value='system' className='w-full'>
+                  {t('systemMode')}
+                </TabsTrigger>
               </TabsList>
             </Tabs>
           </div>
