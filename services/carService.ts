@@ -11,6 +11,11 @@ class CarService {
     return response.json()
   }
 
+  static async getCarBySearch(search: string) {
+    const response = await api.get(`/cars/search?q=${search}`)
+    return response.json()
+  }
+
   // Другие методы для работы с автомобилями
 }
 

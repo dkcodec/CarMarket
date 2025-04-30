@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button'
 import SearchWithIcon from '@/components/SearchWithIcon'
 import { useTranslations } from 'next-intl'
 import SheetBar from './SheetBar'
-
+import { useFiltersStore } from '@/store/useFiltersStore'
+import { useRouter } from 'next/navigation'
 interface HeaderBarProps {
   isOpen: boolean
   onClose: React.Dispatch<React.SetStateAction<boolean>>
@@ -12,12 +13,23 @@ interface HeaderBarProps {
 const HeaderBar: React.FC<HeaderBarProps> = (params) => {
   const t = useTranslations()
   const { isOpen, onClose } = params
+  const router = useRouter()
+  const { resetFilters } = useFiltersStore()
+
+  const handleChange = (value: string) => {
+    resetFilters()
+    router.push(`/?q=${value}`)
+  }
+
   return (
     <div className='flex justify-between items-center p-4 border-b'>
       <div className='flex gap-2 w-full mr-4'>
         <SearchWithIcon
           placeholder={t('Search.PLACEHOLDER')}
           className='w-[100%]'
+          onChange={(e) => {
+            handleChange(e.target.value)
+          }}
         />
       </div>
 

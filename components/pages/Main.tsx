@@ -33,6 +33,14 @@ const Main: React.FC = () => {
       try {
         setLoading(true)
 
+        const searchValue = searchParams.get('q')
+        if (searchValue) {
+          const data = await CarService.getCarBySearch(searchValue)
+          setCars(data?.data?.cars || [])
+          setTotalCars(data?.data?.total_count || 0)
+          return
+        }
+
         const query: Record<string, string> = {
           city: validatedCity,
           limit: String(pageSize),
