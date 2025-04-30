@@ -82,7 +82,7 @@ export function useOpenCage(lang = 'en') {
           'Unknown'
 
         setCity(cityName)
-        setToLocalStorage('city', cityName) // Сохраняем в localStorage
+        setToLocalStorage('city', cityName.toLocaleLowerCase()) // Сохраняем в localStorage
       } catch (err) {
         console.error(err)
         setCity('Error')
@@ -94,7 +94,7 @@ export function useOpenCage(lang = 'en') {
 
   // Если city === 'Error' => возвращаем 'Almaty'
   if (city === 'Error') {
-    return 'Almaty'
+    return 'astana'
   }
 
   return city

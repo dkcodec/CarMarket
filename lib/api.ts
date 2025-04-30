@@ -114,8 +114,9 @@ class ApiClient {
   async get(
     url: string,
     config: Omit<RequestConfig, 'url' | 'method'> = {}
-  ): Promise<Response> {
-    return this.request({ ...config, url, method: 'GET' })
+  ): Promise<any> {
+    const response = await this.request({ ...config, url, method: 'GET' })
+    return response.json()
   }
 
   async post(

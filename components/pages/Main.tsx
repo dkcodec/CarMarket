@@ -14,11 +14,7 @@ import CarService from '@/services/carService'
 const Main: React.FC = () => {
   const t = useTranslations()
   const searchParams = useSearchParams()
-  const city = String(
-    getFromLocalStorage('city') || 'astana'
-  ).toLocaleLowerCase()
-
-  const validatedCity = typeof city === 'string' ? city : 'astana'
+  const [city, setCity] = useState('astana')
 
   const [cars, setCars] = useState<Car[]>([])
   const [loading, setLoading] = useState(true)
@@ -27,6 +23,21 @@ const Main: React.FC = () => {
   const [pageIndex, setPageIndex] = useState(0)
   const [pageSize, setPageSize] = useState(9)
   const [totalCars, setTotalCars] = useState(0)
+
+  useEffect(() => {
+    const handleCity = (event: CustomEvent) => {
+      const newCity = event.detail?.city || getFromLocalStorage('city')
+      setCity(String(newCity).toLocaleLowerCase())
+    }
+
+    window.addEventListener('cityChange', handleCity as EventListener)
+
+    return () => {
+      window.removeEventListener('cityChange', handleCity as EventListener)
+    }
+  }, [])
+
+  console.log(city, 'CITY')
 
   useEffect(() => {
     ;(async function fetchCars() {
@@ -42,7 +53,7 @@ const Main: React.FC = () => {
         }
 
         const query: Record<string, string> = {
-          city: validatedCity,
+          city,
           limit: String(pageSize),
           offset: String(pageIndex),
         }
@@ -73,7 +84,7 @@ const Main: React.FC = () => {
         setLoading(false)
       }
     })()
-  }, [validatedCity, pageIndex, pageSize, searchParams])
+  }, [pageIndex, pageSize, searchParams, city])
 
   return (
     <main className='flex-1 p-4 w-inherit overflow-y-auto no-scrollbar h-[calc(100vh-135px)]'>

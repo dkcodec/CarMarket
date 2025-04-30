@@ -18,6 +18,7 @@ import { useLocale } from 'next-intl'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import CitySelect from '@/components/CitySelect'
 
 export function SiteHeader() {
   const t = useTranslations()
@@ -29,7 +30,7 @@ export function SiteHeader() {
   const [location, setLocation] = useState('')
 
   useEffect(() => {
-    setLocation(city)
+    setLocation(city.toLocaleLowerCase())
   }, [city])
 
   const handleLogout = () => {
@@ -37,40 +38,14 @@ export function SiteHeader() {
     Cookies.remove('auth-storage')
   }
 
+  console.log(location)
+
   return (
     <header className='sticky flex justify-center top-0 z-50 w-full border-b bg-white text-black dark:bg-black  dark:text-white px-2'>
       <div className='container flex h-16 items-center justify-between max-w-[1500px]'>
         {/* Город */}
         <div className='flex items-center gap-2 md:gap-4 '>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant='ghost'
-                className='flex items-center gap-2 text-black dark:text-white'
-              >
-                <MapPin className='h-4 w-4' />
-                <span className='hidden sm:inline-block'>{location}</span>
-                <ChevronDown className='h-4 w-4' />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align='start'>
-              <DropdownMenuItem
-                onClick={() => setLocation('Semarang, Indonesia')}
-              >
-                Semarang, Indonesia
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setLocation('Jakarta, Indonesia')}
-              >
-                Jakarta, Indonesia
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setLocation('Surabaya, Indonesia')}
-              >
-                Surabaya, Indonesia
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <CitySelect location={location} setLocation={setLocation} />
         </div>
 
         {/* Логотип */}
