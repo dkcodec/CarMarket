@@ -33,8 +33,6 @@ const Main: React.FC = () => {
       try {
         setLoading(true)
 
-        console.log(validatedCity)
-
         const query: Record<string, string> = {
           city: validatedCity,
           limit: String(pageSize),
@@ -57,7 +55,6 @@ const Main: React.FC = () => {
         })
 
         const queryString = new URLSearchParams(query).toString()
-        console.log(queryString)
 
         const data = await CarService.getCars(query)
         setCars(data?.data?.cars || [])

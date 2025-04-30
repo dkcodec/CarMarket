@@ -22,7 +22,7 @@
   },
   "Profile": {
     "editProfile": "Редактировать профиль",
-    "personalInfo": "Личная информация",
+    "personalInfo": "Личные данные",
     "security": "Безопасность",
     "activity": "Активность",
     "personalInformation": "Личная информация",
@@ -45,7 +45,14 @@
     "recentActivity": "Недавняя активность",
     "recentActivityDesc": "Просмотр ваших недавних действий и взаимодействий",
     "viewedListing": "Просмотрено объявление {car}",
-    "daysAgo": "{days} дней назад"
+    "daysAgo": "{days} дней назад",
+    "changeTheme": "Сменить тему",
+    "darkMode": "Темная",
+    "lightMode": "Светлая",
+    "systemMode": "Системная",
+    "changeLanguage": "Сменить язык",
+    "ru": "Русский",
+    "en": "Английский"
   },
   "Header": {
     "Profile": "Профиль",

@@ -1,14 +1,17 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import createMiddleware from 'next-intl/middleware'
+import { routing } from './i18n/routing'
 
 // Список защищенных маршрутов
 const protectedRoutes = ['/profile', '/favorites', '/settings']
 
+const intlMiddleware = createMiddleware(routing)
+
 export function middleware(request: NextRequest) {
+  const response = intlMiddleware(request)
   const token = request.cookies.get('auth-storage')?.value
   const { pathname } = request.nextUrl
-
-  console.log(token)
 
   // Редирект с корневого пути на локализованную версию
   if (pathname === '/') {
@@ -33,7 +36,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/en', request.url))
   }
 
-  return NextResponse.next()
+  return response
 }
 
 export const config = {

@@ -254,7 +254,6 @@ const Filters = () => {
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
     // Сформируем объект для URL
     const cleanData: Record<string, string> = {}
-    console.log(data)
 
     // Проверим валидность model / generation для текущего brand
     const possibleModels = data.brand ? modelsByBrand[data.brand] || [] : []

@@ -97,4 +97,10 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
+  .fill-white {
+    fill: white;
+  }
+  .svg-white {
+    filter: brightness(0) invert(1);
+  }
 }

@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useTranslations } from 'next-intl'
+import { ChangeEvent, useEffect, useState, useTransition } from 'react'
+import { Locale, useLocale, useTranslations } from 'next-intl'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Card,
@@ -18,11 +18,38 @@ import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useTheme } from 'next-themes'
+import { useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
+import { usePathname } from 'next/navigation'
+import {
+  Select,
+  SelectItem,
+  SelectContent,
+  SelectValue,
+  SelectTrigger,
+} from '@/components/ui/select'
 
 export default function ProfilePage() {
   const t = useTranslations('Profile')
   const [activeTab, setActiveTab] = useState('personal')
   const { theme, setTheme, systemTheme } = useTheme()
+  const locale = useLocale()
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
+  const pathname = usePathname()
+  const params = useParams()
+
+  function onSelectChange(value: string) {
+    const nextLocale = value as Locale
+
+    // Get the path without the locale
+    const pathWithoutLocale = pathname.split('/').slice(2).join('/')
+    const newPath = `/${nextLocale}/${pathWithoutLocale}`
+
+    startTransition(() => {
+      router.replace(newPath)
+    })
+  }
 
   // Mock user data - in a real app, this would come from an API or context
   const user = {
@@ -36,7 +63,11 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className='container mx-auto py-10'>
+    <div
+      className={`container mx-auto py-10 ${
+        isPending && 'transition-opacity [&:disabled]:opacity-30'
+      }`}
+    >
       <div className='flex flex-col gap-8'>
         {/* Profile Header */}
         <div className='flex flex-col md:flex-row gap-6 items-start md:items-center'>
@@ -57,6 +88,12 @@ export default function ProfilePage() {
             </p>
           </div>
           <div className='ml-auto'>
+            <Label
+              htmlFor='language-select'
+              className='text-sm text-muted-foreground mb-2 block text-right'
+            >
+              {t('changeTheme')}
+            </Label>
             <Tabs
               defaultValue={theme || systemTheme}
               onValueChange={(value) => setTheme(value)}
@@ -74,6 +111,27 @@ export default function ProfilePage() {
               </TabsList>
             </Tabs>
           </div>
+
+          <div className='ml-auto'>
+            <Label
+              htmlFor='language-select'
+              className='text-sm text-muted-foreground mb-2 block text-right'
+            >
+              {t('changeLanguage')}
+            </Label>
+            <Select value={locale} onValueChange={onSelectChange}>
+              <SelectTrigger
+                id='language-select'
+                className='rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+              >
+                <SelectValue placeholder='Select a language' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='en'>{t('en')}</SelectItem>
+                <SelectItem value='ru'>{t('ru')}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <Separator />
@@ -84,9 +142,9 @@ export default function ProfilePage() {
           className='w-full'
           onValueChange={setActiveTab}
         >
-          <TabsList className='grid w-full grid-cols-3'>
+          <TabsList className='grid w-full grid-cols-2'>
             <TabsTrigger value='personal'>{t('personalInfo')}</TabsTrigger>
-            <TabsTrigger value='security'>{t('security')}</TabsTrigger>
+            {/* <TabsTrigger value='security'>{t('security')}</TabsTrigger> */}
             <TabsTrigger value='activity'>{t('activity')}</TabsTrigger>
           </TabsList>
 
@@ -134,7 +192,7 @@ export default function ProfilePage() {
             </Card>
           </TabsContent>
 
-          <TabsContent value='security' className='mt-6'>
+          {/* <TabsContent value='security' className='mt-6'>
             <Card>
               <CardHeader>
                 <CardTitle>{t('securitySettings')}</CardTitle>
@@ -171,7 +229,7 @@ export default function ProfilePage() {
                 <Button>{t('updateSecurity')}</Button>
               </CardFooter>
             </Card>
-          </TabsContent>
+          </TabsContent> */}
 
           <TabsContent value='activity' className='mt-6'>
             <Card>

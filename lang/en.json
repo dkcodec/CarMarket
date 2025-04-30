@@ -45,7 +45,14 @@
     "recentActivity": "Recent Activity",
     "recentActivityDesc": "View your recent actions and interactions",
     "viewedListing": "Viewed listing for {car}",
-    "daysAgo": "{days} days ago"
+    "daysAgo": "{days} days ago",
+    "changeTheme": "Change Theme",
+    "darkMode": "Dark",
+    "lightMode": "Light",
+    "systemMode": "System",
+    "changeLanguage": "Change Language",
+    "ru": "Russian",
+    "en": "English"
   },
   "Header": {
     "Profile": "Profile",

@@ -55,8 +55,6 @@ export const PhoneAuthForm = () => {
       )
       setPhone(data.phone.replace(/\s/g, ''))
 
-      console.log(response)
-
       if (response) {
         setStep('code')
       } else {

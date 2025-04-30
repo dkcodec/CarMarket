@@ -22,7 +22,6 @@ class AuthService {
     }
 
     const data = await response.json()
-    console.log('Auth response:', data)
 
     if (data.data.access_token && data.data.refresh_token) {
       const authData: AuthData = {
@@ -56,7 +55,6 @@ class AuthService {
       refresh_token: refreshToken,
     })
     const data = await response.json()
-    console.log(data.access_token, data.refresh_token)
 
     if (data.access_token && data.refresh_token) {
       const currentAuth = JSON.parse(

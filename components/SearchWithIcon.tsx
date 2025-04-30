@@ -35,8 +35,6 @@ export default function SearchWithIcon(
       params.set('q', debouncedSearchValue)
     }
 
-    console.log(locale, params.toString())
-
     // навигация
     router.replace(`/${locale}?${params.toString()}`)
   }, [debouncedSearchValue])
