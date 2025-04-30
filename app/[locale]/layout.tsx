@@ -12,8 +12,7 @@ export default async function LocaleLayout({
   return (
     <div>
       <NextIntlClientProvider locale={locale} messages={messages}>
-        <SiteHeader />
-        <div className='max-w-[1500px] mx-auto px-4'>{children}</div>
+        {children}
       </NextIntlClientProvider>
     </div>
   )

@@ -9,10 +9,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Phone, ArrowLeft, CheckCircle2, Loader2 } from 'lucide-react'
-import { useAuth } from '@/hooks/useAuth'
 import { useRouter } from 'next/navigation'
 import AuthService from '@/services/authService'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 // Схема валидации для номера телефона
 const phoneSchema = z.object({
   phone: z.string().min(11, 'Error, phone is not valid'),
@@ -28,7 +27,7 @@ type CodeFormData = z.infer<typeof codeSchema>
 
 export const PhoneAuthForm = () => {
   const router = useRouter()
-  const { setAuth } = useAuth()
+  const t = useTranslations()
   const locale = useLocale()
 
   const [step, setStep] = useState<'phone' | 'code'>('phone')
@@ -51,7 +50,7 @@ export const PhoneAuthForm = () => {
     try {
       setError(null)
       setIsLoading(true)
-      // TODO: Заменить на ваш API endpoint
+
       const response = await AuthService.requestCode(
         data.phone.replace(/\s/g, '')
       )
@@ -61,10 +60,14 @@ export const PhoneAuthForm = () => {
         setStep('code')
       } else {
         const errorData = await response
-        throw new Error(errorData.message || 'Error sending code')
+        throw new Error(errorData.message || t('auth.phone.errorSendingCode'))
       }
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Error sending code')
+      setError(
+        error instanceof Error
+          ? error.message
+          : t('auth.phone.errorSendingCode')
+      )
     } finally {
       setIsLoading(false)
     }
@@ -81,19 +84,25 @@ export const PhoneAuthForm = () => {
         router.push(`/${locale}`)
       } else {
         const errorData = await response
-        throw new Error(errorData.message || 'Error verifying code')
+        throw new Error(errorData.message || t('auth.code.errorVerifyingCode'))
       }
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Error verifying code')
+      setError(
+        error instanceof Error
+          ? error.message
+          : t('auth.code.errorVerifyingCode')
+      )
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <Card className='w-full max-w-md mx-auto'>
+    <Card className='w-full max-w-md mx-auto overflow-hidden'>
       <CardHeader className='space-y-1'>
-        <CardTitle className='text-2xl font-bold text-center'>{step}</CardTitle>
+        <CardTitle className='text-2xl font-bold text-center'>
+          {step === 'phone' ? t('auth.phone.title') : t('auth.code.title')}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         {error && (
@@ -117,7 +126,7 @@ export const PhoneAuthForm = () => {
               <div className='space-y-2'>
                 <Label htmlFor='phone' className='flex items-center gap-2'>
                   <Phone className='w-4 h-4' />
-                  Phone
+                  {t('auth.phone.label')}
                 </Label>
                 <Input
                   id='phone'
@@ -132,8 +141,12 @@ export const PhoneAuthForm = () => {
                   </p>
                 )}
               </div>
-              <Button type='submit' className='w-full h-11'>
-                {isLoading ? <Spinner /> : 'Get Code'}
+              <Button
+                type='submit'
+                className='w-full h-11'
+                disabled={isLoading}
+              >
+                {isLoading ? <Spinner /> : t('auth.phone.button')}
               </Button>
             </form>
           </div>
@@ -142,7 +155,7 @@ export const PhoneAuthForm = () => {
             className={`transition-all duration-300 ${
               step === 'code'
                 ? 'opacity-100 translate-x-0'
-                : 'opacity-0 translate-x-full absolute'
+                : 'none opacity-0 translate-x-full absolute'
             }`}
           >
             <form
@@ -152,12 +165,12 @@ export const PhoneAuthForm = () => {
               <div className='space-y-2'>
                 <Label htmlFor='code' className='flex items-center gap-2'>
                   <CheckCircle2 className='w-4 h-4' />
-                  Code
+                  {t('auth.code.label')}
                 </Label>
                 <Input
                   id='code'
                   type='text'
-                  placeholder='Enter the code from SMS'
+                  placeholder={t('auth.code.placeholder')}
                   className='h-11'
                   {...codeForm.register('code')}
                 />
@@ -167,8 +180,12 @@ export const PhoneAuthForm = () => {
                   </p>
                 )}
               </div>
-              <Button type='submit' className='w-full h-11'>
-                {isLoading ? <Spinner /> : 'Verify'}
+              <Button
+                type='submit'
+                className='w-full h-11'
+                disabled={isLoading}
+              >
+                {isLoading ? <Spinner /> : t('auth.code.button')}
               </Button>
               <Button
                 type='button'
@@ -177,7 +194,7 @@ export const PhoneAuthForm = () => {
                 onClick={() => setStep('phone')}
               >
                 <ArrowLeft className='w-4 h-4 mr-2' />
-                Change Phone
+                {t('auth.code.changePhone')}
               </Button>
             </form>
           </div>

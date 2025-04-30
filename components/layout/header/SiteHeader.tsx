@@ -35,7 +35,6 @@ export function SiteHeader() {
   const handleLogout = () => {
     clearAuth()
     Cookies.remove('auth-storage')
-    router.push(`/auth`)
   }
 
   return (
@@ -141,8 +140,11 @@ export function SiteHeader() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button className='relative h-8 w-8 px-8 bg-blue-600 text-white hover:bg-blue-700'>
-              <Link href='/auth'>{t('Header.Login')}</Link>
+            <Button
+              className='relative h-8 w-8 px-8 bg-blue-600 text-white hover:bg-blue-700'
+              onClick={() => router.replace(`/auth`)}
+            >
+              {t('Header.Login')}
             </Button>
           )}
         </div>

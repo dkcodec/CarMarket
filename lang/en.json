@@ -67,12 +67,14 @@
     "title": "Login",
     "description": "Enter your phone number to receive a verification code",
     "phone": {
+      "title": "Enter your phone number",
       "label": "Phone Number",
       "placeholder": "+1 (___) ___-__-__",
       "button": "Get Code",
       "error": "Invalid phone number"
     },
     "code": {
+      "title": "Enter your verification code",
       "label": "Verification Code",
       "placeholder": "Enter the code from SMS",
       "button": "Verify",
