@@ -12,7 +12,7 @@ import { Phone, ArrowLeft, CheckCircle2, Loader2 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { useRouter } from 'next/navigation'
 import AuthService from '@/services/authService'
-
+import { useLocale } from 'next-intl'
 // Схема валидации для номера телефона
 const phoneSchema = z.object({
   phone: z.string().min(11, 'Error, phone is not valid'),
@@ -29,6 +29,8 @@ type CodeFormData = z.infer<typeof codeSchema>
 export const PhoneAuthForm = () => {
   const router = useRouter()
   const { setAuth } = useAuth()
+  const locale = useLocale()
+
   const [step, setStep] = useState<'phone' | 'code'>('phone')
   const [phone, setPhone] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -76,7 +78,7 @@ export const PhoneAuthForm = () => {
       const response = await AuthService.verifyCode(phone, data.code)
 
       if (response) {
-        router.push('/')
+        router.push(`/${locale}`)
       } else {
         const errorData = await response
         throw new Error(errorData.message || 'Error verifying code')

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import createMiddleware from 'next-intl/middleware'
 import { routing } from './i18n/routing'
+import { useLocale } from 'next-intl'
 
 // Список защищенных маршрутов
 const protectedRoutes = ['/profile', '/favorites', '/settings']
@@ -15,7 +16,7 @@ export function middleware(request: NextRequest) {
 
   // Редирект с корневого пути на локализованную версию
   if (pathname === '/') {
-    return NextResponse.redirect(new URL('/en', request.url))
+    return NextResponse.redirect(new URL(`/en`, request.url))
   }
 
   // Проверяем, является ли маршрут защищенным
@@ -48,6 +49,6 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|logo.svg).*)',
   ],
 }

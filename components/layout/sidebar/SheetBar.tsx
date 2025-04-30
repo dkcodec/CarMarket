@@ -14,15 +14,17 @@ import { useTranslations } from 'next-intl'
 import Filters from '@/components/Filters'
 import { useRouter } from 'next/navigation'
 import { useFiltersStore } from '@/store/useFiltersStore'
+import { useLocale } from 'next-intl'
 
 const SheetBar: React.FC = () => {
   const t = useTranslations()
   const router = useRouter()
+  const locale = useLocale()
   const { resetFilters } = useFiltersStore()
 
   const handleReset = () => {
     resetFilters()
-    router.push('/')
+    router.push(`/${locale}`)
   }
 
   return (

@@ -17,6 +17,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useLocale } from 'next-intl'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 export function SiteHeader() {
   const t = useTranslations()
@@ -34,7 +35,7 @@ export function SiteHeader() {
   const handleLogout = () => {
     clearAuth()
     Cookies.remove('auth-storage')
-    router.push(`/${locale}/auth`)
+    router.push(`/auth`)
   }
 
   return (
@@ -75,8 +76,14 @@ export function SiteHeader() {
 
         {/* Логотип */}
         <div className='flex items-center'>
-          <Link href='/' className='flex items-center gap-2'>
-            <img src='/logo.svg' alt='logo' className='h-10 w-10 svg-white' />
+          <Link href={`/${locale}`} className='flex items-center gap-2'>
+            <Image
+              src='/logo.svg'
+              alt='logo'
+              className='h-10 w-10 svg-white'
+              width={40}
+              height={40}
+            />
 
             <span className='text-xl font-bold text-black dark:text-white hidden sm:inline-block'>
               Auto.Hunt
