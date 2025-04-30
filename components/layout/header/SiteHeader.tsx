@@ -79,9 +79,9 @@ export function SiteHeader() {
             <Image
               src='/logo.svg'
               alt='logo'
-              className='h-10 w-10 svg-white'
-              width={40}
-              height={40}
+              className='dark:invert'
+              width={50}
+              height={50}
             />
 
             <span className='text-xl font-bold text-black dark:text-white hidden sm:inline-block'>
