@@ -75,9 +75,7 @@ type PreviewImagesBlockProps = {
   form: ReturnType<typeof useForm<FormValues>>
 }
 
-export function SpreadAnimatedPreviewImagesBlock({
-  form,
-}: PreviewImagesBlockProps) {
+function SpreadAnimatedPreviewImagesBlock({ form }: PreviewImagesBlockProps) {
   const files = form.watch('images') || []
   const [items, setItems] = useState<File[]>(files)
   const originalItemsRef = useRef<File[]>([])
