@@ -23,13 +23,13 @@ class CarService {
     const phone = useAuth.getState().phone
 
     const formattedData = {
-      category_id: data.category,
-      brand_id: data.brand,
-      model_id: data.model,
-      generation_id: data.generation,
-      color_id: data.color,
-      city_id: data.city,
-      body_id: data.body,
+      category_source: data.category,
+      brand_source: data.brand,
+      model_source: data.model,
+      generation_source: data.generation,
+      color_source: data.color,
+      city_source: data.city,
+      body_source: data.body,
 
       mileage: data.mileage,
       price: data.price,
