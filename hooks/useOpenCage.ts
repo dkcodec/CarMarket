@@ -83,6 +83,12 @@ export function useOpenCage(lang = 'en') {
 
         setCity(cityName)
         setToLocalStorage('city', cityName.toLocaleLowerCase()) // Сохраняем в localStorage
+        window.dispatchEvent(
+          new CustomEvent('cityChange', {
+            detail: { city: cityName.toLocaleLowerCase() },
+            bubbles: true,
+          })
+        )
       } catch (err) {
         console.error(err)
         setCity('Error')

@@ -28,6 +28,7 @@ import {
   SelectValue,
   SelectTrigger,
 } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
 
 export default function ProfilePage() {
   const t = useTranslations('Profile')
@@ -179,7 +180,7 @@ export default function ProfilePage() {
                 </div>
                 <div className='space-y-2'>
                   <Label htmlFor='bio'>{t('bio')}</Label>
-                  <textarea
+                  <Textarea
                     id='bio'
                     className='w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
                     defaultValue={user.bio}

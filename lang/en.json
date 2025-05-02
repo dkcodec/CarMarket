@@ -7,7 +7,11 @@
   },
   "Sidebar": {
     "TITLE": "Filters",
-    "RESET": "Reset"
+    "RESET": "Reset",
+    "APPLY": "Apply",
+    "HIDE": "Hide sidebar",
+    "SHOW": "Show sidebar",
+    "SELL_CAR": "Sell car"
   },
   "Filters": {
     "BRAND": "Brand",
@@ -81,5 +85,60 @@
       "changePhone": "Change Phone",
       "error": "Invalid verification code"
     }
+  },
+  "SellCar": {
+    "title": "Sell Car",
+    "preview": "Preview",
+    "category": "Category",
+    "brand": "Brand",
+    "yes": "Yes",
+    "no": "No",
+    "model": "Model",
+    "year": "Year",
+    "price": "Price",
+    "description": "Description",
+    "images": "Car Photos",
+    "selectCategory": "Select category",
+    "selectBrand": "Select brand",
+    "selectModel": "Select model",
+    "yearPlaceholder": "2020",
+    "pricePlaceholder": "2500000",
+    "descriptionPlaceholder": "Condition, mileage, features...",
+    "next": "Next",
+    "back": "Back",
+    "submit": "Post Ad",
+    "previewTitle": "Ad Preview",
+    "previewBrand": "Brand",
+    "previewModel": "Model",
+    "previewCategory": "Category",
+    "previewYear": "Year",
+    "previewPrice": "Price",
+    "previewDescription": "Description",
+    "previewImages": "Photos",
+    "notSelected": "Not selected",
+    "wheel_drive": "Wheel drive",
+    "steering_wheel": "Steering wheel",
+    "customs_clearance": "Customs clearance",
+    "fwd": "Front-wheel drive",
+    "awd": "All-wheel drive",
+    "rwd": "Rear-wheel drive",
+    "left": "Left",
+    "right": "Right",
+    "body": "Body",
+    "selectBody": "Select body",
+    "generation": "Generation",
+    "selectGeneration": "Select generation",
+    "color": "Color",
+    "selectColor": "Select color",
+    "city": "City",
+    "selectCity": "Select city",
+    "engine": "Engine",
+    "enginePlaceholder": "Engine volume",
+    "mileage": "Mileage",
+    "mileagePlaceholder": "Enter mileage"
+  },
+  "InputFile": {
+    "maxFiles": "You can select a maximum of {maxFiles} files",
+    "selectFiles": "Select files"
   }
 }

@@ -22,30 +22,28 @@ import CitySelect from '@/components/CitySelect'
 
 export function SiteHeader() {
   const t = useTranslations()
-  const city = useOpenCage()
   const { isAuthenticated, clearAuth } = useAuth()
   const locale = useLocale()
   const router = useRouter()
-
-  const [location, setLocation] = useState('')
-
-  useEffect(() => {
-    setLocation(city.toLocaleLowerCase())
-  }, [city])
+  const [open, setOpen] = useState(false)
 
   const handleLogout = () => {
     clearAuth()
     Cookies.remove('auth-storage')
+    setOpen(false)
   }
 
-  console.log(location)
+  const handleProfileClick = () => {
+    setOpen(false)
+    router.push(`/${locale}/profile`)
+  }
 
   return (
     <header className='sticky flex justify-center top-0 z-50 w-full border-b bg-white text-black dark:bg-black  dark:text-white px-2'>
       <div className='container flex h-16 items-center justify-between max-w-[1500px]'>
         {/* Город */}
         <div className='flex items-center gap-2 md:gap-4 '>
-          <CitySelect location={location} setLocation={setLocation} />
+          <CitySelect />
         </div>
 
         {/* Логотип */}
@@ -87,8 +85,10 @@ export function SiteHeader() {
               2
             </span>
           </Button>
+
+          {/* Профиль */}
           {isAuthenticated ? (
-            <DropdownMenu>
+            <DropdownMenu open={open} onOpenChange={setOpen}>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant='ghost'
@@ -101,13 +101,8 @@ export function SiteHeader() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align='end'>
-                <DropdownMenuItem>
-                  <Link
-                    href={`/${locale}/profile`}
-                    style={{ textDecoration: 'none', width: '100%' }}
-                  >
-                    {t('Header.Profile')}
-                  </Link>
+                <DropdownMenuItem onClick={handleProfileClick}>
+                  {t('Header.Profile')}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogout}>
                   {t('Header.Logout')}

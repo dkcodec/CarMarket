@@ -5,6 +5,8 @@ import { useTranslations } from 'next-intl'
 import SheetBar from './SheetBar'
 import { useFiltersStore } from '@/store/useFiltersStore'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+
 interface HeaderBarProps {
   isOpen: boolean
   onClose: React.Dispatch<React.SetStateAction<boolean>>
@@ -33,16 +35,18 @@ const HeaderBar: React.FC<HeaderBarProps> = (params) => {
         />
       </div>
 
-      <div className='hidden sm:block'>
-        <Button variant='outline' onClick={() => onClose((prev) => !prev)}>
-          {isOpen ? 'Скрыть сайдбар' : 'Показать сайдбар'}
-        </Button>
-      </div>
+      <div className='flex gap-4'>
+        <div className='hidden sm:block'>
+          <Button variant='outline' onClick={() => onClose((prev) => !prev)}>
+            {isOpen ? t('Sidebar.HIDE') : t('Sidebar.SHOW')}
+          </Button>
+        </div>
 
-      <div className='hidden sm:block'>
-        <Button variant='outline' onClick={() => onClose((prev) => !prev)}>
-          {isOpen ? 'Скрыть сайдбар' : 'Показать сайдбар'}
-        </Button>
+        <div className='hidden sm:block'>
+          <Button variant='outline' className='bg-blue-600 text-white'>
+            <Link href='/sell-car'>{t('Sidebar.SELL_CAR')}</Link>
+          </Button>
+        </div>
       </div>
 
       <div className='sm:hidden'>

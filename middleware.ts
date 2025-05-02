@@ -5,7 +5,7 @@ import { routing } from './i18n/routing'
 import { useLocale } from 'next-intl'
 
 // Список защищенных маршрутов
-const protectedRoutes = ['/profile', '/favorites', '/settings']
+const protectedRoutes = ['/profile', '/sell-car']
 
 const intlMiddleware = createMiddleware(routing)
 

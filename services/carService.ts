@@ -1,3 +1,5 @@
+import { getFromLocalStorage } from '@/helpers/localStorageHelper'
+import { useAuth } from '@/hooks/useAuth'
 import api from '@/lib/api'
 
 class CarService {
@@ -16,7 +18,32 @@ class CarService {
     return response
   }
 
-  // Другие методы для работы с автомобилями
+  static async createCar(data: any) {
+    console.log('data', data)
+    const phone = useAuth.getState().phone
+
+    const formattedData = {
+      category_id: data.category,
+      brand_id: data.brand,
+      model_id: data.model,
+      generation_id: data.generation,
+      color_id: data.color,
+      city_id: data.city,
+      body_id: data.body,
+
+      mileage: data.mileage,
+      price: data.price,
+      engine_volume: data.engine,
+      customs_clearance: Boolean(data.customs_clearance),
+      description: data.description,
+      steering_wheel: data.steering_wheel,
+      wheel_drive: data.wheel_drive,
+
+      phone: phone,
+    }
+    const response = await api.post('/cars/create', formattedData)
+    return response
+  }
 }
 
 export default CarService

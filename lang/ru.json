@@ -8,7 +8,10 @@
   "Sidebar": {
     "TITLE": "Фильтры",
     "RESET": "Сбросить",
-    "APPLY": "Применить"
+    "APPLY": "Применить",
+    "HIDE": "Скрыть сайдбар",
+    "SHOW": "Показать сайдбар",
+    "SELL_CAR": "Продать машину"
   },
   "Filters": {
     "BRAND": "Бренд",
@@ -85,5 +88,60 @@
       "errorSendingCode": "Ошибка при отправке кода",
       "errorVerifyingCode": "Ошибка при проверке кода"
     }
+  },
+  "SellCar": {
+    "title": "Продажа авто",
+    "preview": "Предпросмотр",
+    "yes": "Да",
+    "no": "Нет",
+    "selectCategory": "Выберите категорию",
+    "selectBrand": "Выберите марку",
+    "selectModel": "Выберите модель",
+    "yearPlaceholder": "2020",
+    "pricePlaceholder": "2500000",
+    "descriptionPlaceholder": "Состояние, пробег, особенности...",
+    "next": "Далее",
+    "back": "Назад",
+    "submit": "Разместить",
+    "previewTitle": "Объявление",
+    "previewBrand": "Марка",
+    "previewModel": "Модель",
+    "previewCategory": "Категория",
+    "previewYear": "Год",
+    "previewPrice": "Цена",
+    "previewDescription": "Описание",
+    "previewImages": "Фотографии",
+    "notSelected": "Не указано",
+    "fwd": "Передний",
+    "awd": "Полный",
+    "rwd": "Задний",
+    "left": "Левый",
+    "right": "Правый",
+    "category": "Категория",
+    "body": "Кузов",
+    "selectBody": "Выберите кузов",
+    "brand": "Марка",
+    "model": "Модель",
+    "generation": "Поколение",
+    "selectGeneration": "Выберите поколение",
+    "color": "Цвет",
+    "selectColor": "Выберите цвет",
+    "city": "Город",
+    "selectCity": "Выберите город",
+    "year": "Год",
+    "engine": "Двигатель",
+    "enginePlaceholder": "Объем двигателя",
+    "mileage": "Пробег",
+    "mileagePlaceholder": "Укажите пробег",
+    "customs_clearance": "Таможенная очистка",
+    "steering_wheel": "Руль",
+    "wheel_drive": "Привод",
+    "price": "Цена",
+    "description": "Описание",
+    "images": "Фотографии"
+  },
+  "InputFile": {
+    "maxFiles": "Вы можете выбрать максимум {maxFiles} файлов",
+    "selectFiles": "Выбрать файлы"
   }
 }

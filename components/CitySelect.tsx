@@ -9,16 +9,18 @@ import {
 import { Button } from './ui/button'
 import { MapPin } from 'lucide-react'
 import api from '@/lib/api'
-import { setToLocalStorage } from '@/helpers/localStorageHelper'
+import {
+  getFromLocalStorage,
+  setToLocalStorage,
+} from '@/helpers/localStorageHelper'
 
-const CitySelect = ({
-  location,
-  setLocation,
-}: {
-  location: string
-  setLocation: React.Dispatch<React.SetStateAction<string>>
-}) => {
+const CitySelect = () => {
   const [cities, setCities] = useState<Record<string, string>[]>([])
+  const [location, setLocation] = useState<string>('')
+
+  useEffect(() => {
+    setLocation(getFromLocalStorage('city') || 'astana')
+  }, [])
 
   useEffect(() => {
     ;(async () => {
@@ -29,8 +31,8 @@ const CitySelect = ({
   }, [])
 
   const handleCityClick = (city: string) => {
-    setLocation(city)
     setToLocalStorage('city', city)
+    setLocation(city)
 
     const event = new CustomEvent('cityChange', {
       detail: { city },
@@ -38,8 +40,6 @@ const CitySelect = ({
     })
     window.dispatchEvent(event)
   }
-
-  console.log(cities)
 
   return (
     <DropdownMenu>
@@ -49,7 +49,9 @@ const CitySelect = ({
           className='flex items-center gap-2 text-black dark:text-white'
         >
           <MapPin className='h-4 w-4' />
-          <span className='hidden sm:inline-block'>{location}</span>
+          <span className='hidden sm:inline-block'>
+            {cities.find((city) => city.source === location)?.name}
+          </span>
           <ChevronDown className='h-4 w-4' />
         </Button>
       </DropdownMenuTrigger>
@@ -58,7 +60,9 @@ const CitySelect = ({
           <DropdownMenuItem
             key={city.source}
             onClick={() => handleCityClick(city.source)}
-            className='cursor-pointer'
+            className={`cursor-pointer ${
+              city.source === location ? 'bg-accent text-accent-foreground' : ''
+            }`}
           >
             {city.name}
           </DropdownMenuItem>
