@@ -38,6 +38,11 @@ export function SiteHeader() {
     router.push(`/${locale}/profile`)
   }
 
+  const handleAddCarClick = () => {
+    setOpen(false)
+    router.push(`/${locale}/sell-car`)
+  }
+
   return (
     <header className='sticky flex justify-center top-0 z-50 w-full border-b bg-white text-black dark:bg-black  dark:text-white px-2'>
       <div className='container flex h-16 items-center justify-between max-w-[1500px]'>
@@ -103,6 +108,9 @@ export function SiteHeader() {
               <DropdownMenuContent align='end'>
                 <DropdownMenuItem onClick={handleProfileClick}>
                   {t('Header.Profile')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleAddCarClick}>
+                  {t('SellCar.title')}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogout}>
                   {t('Header.Logout')}

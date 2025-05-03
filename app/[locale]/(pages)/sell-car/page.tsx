@@ -41,11 +41,11 @@ const formSchema = z.object({
   year: z.string().regex(/^\d{4}$/),
   engine: z.string().min(1),
   mileage: z.string().min(1),
-  customs_clearance: z.string().min(1),
-  steering_wheel: z.string().min(1),
-  wheel_drive: z.string().min(1),
+  customs_clearance: z.string(),
+  steering_wheel: z.string(),
+  wheel_drive: z.string(),
   price: z.string().regex(/^\d+$/),
-  description: z.string().min(10),
+  description: z.string(),
   images: z.custom<File[]>(),
   color: z.string().min(1),
 })
@@ -102,7 +102,6 @@ function SpreadAnimatedPreviewImagesBlock({ form }: PreviewImagesBlockProps) {
   // disable scrolling/select during drag/touch
   useEffect(() => {
     if (draggingIndex !== null) {
-      console.log('dragging')
       document.body.style.touchAction = 'none'
       document.body.style.overscrollBehavior = 'contain'
       document.body.style.userSelect = 'none'
@@ -347,8 +346,6 @@ export default function SellCarAnimatedForm() {
       })
     }
   }, [form.watch('brand'), form.watch('model'), loadDetails])
-
-  console.log(details)
 
   const onNext = async () => {
     const field = fields[step]

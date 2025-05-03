@@ -138,7 +138,13 @@
     "wheel_drive": "Привод",
     "price": "Цена",
     "description": "Описание",
-    "images": "Фотографии"
+    "images": "Фотографии",
+    "characteristics": "Характеристики",
+    "additional_information": "Дополнительная информация",
+    "vin": "VIN",
+    "number": "Номер",
+    "transmission": "Коробка",
+    "drive": "Привод"
   },
   "InputFile": {
     "maxFiles": "Вы можете выбрать максимум {maxFiles} файлов",

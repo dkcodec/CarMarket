@@ -9,7 +9,7 @@ class CarService {
   }
 
   static async getCarById(id: string) {
-    const response = await api.get(`/api/cars/${id}`)
+    const response = await api.get(`/cars/${id}`)
     return response
   }
 
@@ -19,27 +19,63 @@ class CarService {
   }
 
   static async createCar(data: any) {
-    console.log('data', data)
     const phone = useAuth.getState().phone
 
-    const formattedData = {
-      category_source: data.category,
-      brand_source: data.brand,
-      model_source: data.model,
-      generation_source: data.generation,
-      color_source: data.color,
-      city_source: data.city,
-      body_source: data.body,
+    const base64Images = await Promise.all(
+      (data.images || []).map((file: File) => {
+        return new Promise((resolve, reject) => {
+          if (!(file instanceof File)) {
+            reject(new Error('Invalid file format'))
+            return
+          }
 
-      mileage: data.mileage,
-      price: data.price,
-      engine_volume: data.engine,
-      customs_clearance: Boolean(data.customs_clearance),
-      description: data.description,
-      steering_wheel: data.steering_wheel,
-      wheel_drive: data.wheel_drive,
+          // Check file size (max 5MB)
+          if (file.size > 5 * 1024 * 1024) {
+            reject(new Error(`File ${file.name} is too large. Max size is 5MB`))
+            return
+          }
+
+          // Check file type
+          if (!file.type.startsWith('image/')) {
+            reject(new Error(`File ${file.name} is not an image`))
+            return
+          }
+
+          const reader = new FileReader()
+          reader.onload = () => {
+            const base64 = reader.result as string
+            // Remove data:image/jpeg;base64, prefix
+            const cleanBase64 = base64.split(',')[1]
+            resolve(cleanBase64)
+          }
+          reader.onerror = reject
+          reader.readAsDataURL(file)
+        })
+      })
+    )
+
+    const formattedData = {
+      ...(data.category && { category_source: data.category }),
+      ...(data.brand && { brand_source: data.brand }),
+      ...(data.model && { model_source: data.model }),
+      ...(data.generation && { generation_source: data.generation }),
+      ...(data.color && { color_source: data.color }),
+      ...(data.city && { city_source: data.city }),
+      ...(data.body && { body_source: data.body }),
+
+      ...(data.year && { year: data.year }),
+      ...(data.mileage && { mileage: data.mileage }),
+      ...(data.price && { price: data.price }),
+      ...(data.engine && { engine_volume: data.engine }),
+      ...(data.customs_clearance !== undefined && {
+        customs_clearance: Boolean(data.customs_clearance),
+      }),
+      ...(data.description && { description: data.description }),
+      ...(data.steering_wheel && { steering_wheel: data.steering_wheel }),
+      ...(data.wheel_drive && { wheel_drive: data.wheel_drive }),
 
       phone: phone,
+      images: base64Images,
     }
     const response = await api.post('/cars/create', formattedData)
     return response

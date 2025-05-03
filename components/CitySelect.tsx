@@ -25,7 +25,6 @@ const CitySelect = () => {
   useEffect(() => {
     ;(async () => {
       const response = await api.get('/details/cities')
-      console.log(response)
       setCities(response.data)
     })()
   }, [])

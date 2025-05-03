@@ -135,7 +135,13 @@
     "engine": "Engine",
     "enginePlaceholder": "Engine volume",
     "mileage": "Mileage",
-    "mileagePlaceholder": "Enter mileage"
+    "mileagePlaceholder": "Enter mileage",
+    "characteristics": "Characteristics",
+    "additional_information": "Additional information",
+    "vin": "VIN",
+    "number": "Number",
+    "transmission": "Transmission",
+    "drive": "Drive"
   },
   "InputFile": {
     "maxFiles": "You can select a maximum of {maxFiles} files",

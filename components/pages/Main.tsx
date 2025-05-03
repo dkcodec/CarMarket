@@ -37,8 +37,6 @@ const Main: React.FC = () => {
     }
   }, [])
 
-  console.log(city, 'CITY')
-
   useEffect(() => {
     ;(async function fetchCars() {
       try {
