@@ -7,16 +7,12 @@ import { Separator } from '@/components/ui/separator'
 import { formatPrice } from '@/lib/utils'
 import { getTranslations } from 'next-intl/server'
 
-interface CarPageProps {
-  params: {
-    id: string
-    locale: string
-  }
-}
-
-export default async function CarPage({ params }: CarPageProps) {
+export default async function CarPage(props: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await props.params
   const t = await getTranslations('SellCar')
-  const car = await CarService.getCarById(params.id)
+  const car = await CarService.getCarById(id)
 
   if (!car) {
     notFound()
