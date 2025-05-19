@@ -26,10 +26,11 @@ import {
 } from '@/components/ui/select'
 import { useCarSellStore } from '@/store/useCarSellSore'
 import { InputFile } from '@/components/ui/input-file'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
 import CarService from '@/services/carService'
+import router from 'next/router'
 
 const formSchema = z.object({
   category: z.string().min(1),
@@ -309,26 +310,28 @@ export default function SellCarAnimatedForm() {
   const { details, isLoading, loadDetails } = useCarSellStore()
   const [step, setStep] = useState(0)
   const t = useTranslations('SellCar')
+  const locale = useLocale()
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: useMemo(
       () => ({
+        images: [],
         category: '',
+        body: '',
         brand: '',
         model: '',
         generation: '',
         color: '',
-        body: '',
         city: '',
+        year: '',
         engine: '',
+        mileage: '',
+        customs_clearance: '',
         steering_wheel: '',
         wheel_drive: '',
-        customs_clearance: '',
-        year: '',
         price: '',
         description: '',
-        images: [],
       }),
       []
     ),
@@ -359,7 +362,12 @@ export default function SellCarAnimatedForm() {
 
   const onSubmit = async (values: FormValues) => {
     try {
-      await CarService.createCar(values)
+      const res = await CarService.createCar(values)
+      if (res.status === 200) {
+        setStep(0)
+        form.reset()
+        router.push(`/${locale}`)
+      }
     } catch (error) {
       console.error(error)
     }
@@ -778,7 +786,23 @@ export default function SellCarAnimatedForm() {
       <div className='py-10 w-full'>
         <h1 className='text-2xl font-bold mb-6 w-full'>{t('title')}</h1>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
+          <form 
+            onSubmit={form.handleSubmit(onSubmit)} 
+            className='space-y-6' 
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                const tag = (e.target as HTMLElement).tagName
+                const isTextarea = tag === 'TEXTAREA'
+          
+                if (!isTextarea) {
+                  e.preventDefault()
+                  if (step < fields.length - 1) {
+                    onNext()
+                  }
+                }
+              }
+            }}
+          >
             <AnimatePresence mode='wait'>
               <motion.div
                 key={fields[step]}
