@@ -30,7 +30,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
 import CarService from '@/services/carService'
-import router from 'next/router'
+import { useRouter } from 'next/navigation'
 
 const formSchema = z.object({
   category: z.string().min(1),
@@ -311,7 +311,8 @@ export default function SellCarAnimatedForm() {
   const [step, setStep] = useState(0)
   const t = useTranslations('SellCar')
   const locale = useLocale()
-
+  const router = useRouter()
+  
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: useMemo(
@@ -363,10 +364,11 @@ export default function SellCarAnimatedForm() {
   const onSubmit = async (values: FormValues) => {
     try {
       const res = await CarService.createCar(values)
+      console.log(res)
       if (res.status === 200) {
+        router.push(`/${locale}`)
         setStep(0)
         form.reset()
-        router.push(`/${locale}`)
       }
     } catch (error) {
       console.error(error)
